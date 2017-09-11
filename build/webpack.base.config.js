@@ -12,8 +12,6 @@ module.exports = {
 			"es6-promise",
 			"lodash",
 			"moment",
-			"axios",
-			"toastr",
 			"apollo-client",
 			"graphql-tag",
 			"i18next"

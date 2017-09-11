@@ -185,30 +185,13 @@ function initI18N(app) {
 
 /**
  * Initialize view engine (pug)
- * 
+ *
  * @param {any} app
  */
 function initViewEngine(app) {
-	// Set view folder
-	app.set("views", path.join(serverFolder, "views"));
-	app.set("view engine", "pug");
-
-	// Environment dependent middleware
-	if (config.isDevMode()) {
-		app.set("showStackError", true);
-
-		// Disable views cache
-		app.set("view cache", false);
-		app.use(helmet.noCache());
-
-		// Jade options: Don't minify html, debug intrumentation
-		app.locals.pretty = true;
-		//app.locals.compileDebug = true;
-
-	} else {
-		app.locals.cache = "memory";
-		app.set("view cache", true);
-	}
+    app.set('views', path.join(__dirname + '/../', 'views'));
+    app.engine('html', require('ejs').renderFile);
+    app.set('view engine', 'html');
 }
 
 /**

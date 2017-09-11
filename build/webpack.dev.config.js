@@ -12,14 +12,7 @@ baseWpConfig.entry.frontend.unshift("webpack-hot-middleware/client");
 module.exports = merge(baseWpConfig, {
 	devtool: "#inline-source-map",
 
-	module: {
-		rules: [
-			{
-				test: /\.scss$/,
-				loaders: ["style-loader", "css-loader", "postcss-loader", "sass-loader"]
-			}
-		]
-	},
+	module: {},
 
 	performance: {
 		hints: false
@@ -27,6 +20,6 @@ module.exports = merge(baseWpConfig, {
 
 	plugins: [
 		new webpack.HotModuleReplacementPlugin(),
-		new webpack.NoErrorsPlugin()
+		new webpack.NoEmitOnErrorsPlugin()
 	]
 });

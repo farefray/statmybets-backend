@@ -27,8 +27,8 @@ agenda.on("fail", function(err, job) {
 agenda.define("removeUnverifiedAccounts", function(job, done) {
 	logger.debug("Running 'removeUnverifiedAccounts' process...");
 	try {
-
-		User.remove({ 
+		logger.debug("Making a query to remove users");
+		User.remove({
 			createdAt: {
 				$lte: moment().subtract(1, "day").toDate()
 			},
