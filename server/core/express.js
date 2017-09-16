@@ -9,7 +9,6 @@ let http 			= require("http");
 let path 			= require("path");
 
 let moment 			= require("moment");
-let flash 			= require("express-flash");
 let morgan 			= require("morgan");
 let bodyParser 		= require("body-parser");
 let cookieParser	= require("cookie-parser");
@@ -91,8 +90,6 @@ function initMiddleware(app) {
 	app.use(cookieParser());
 
 	app.set("etag", true); // other values 'weak', 'strong'
-
-	app.use(flash());
 
 	if (config.isDevMode()) {
 		// Init morgan

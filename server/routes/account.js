@@ -46,17 +46,6 @@ function checkAvailableSocialAuth() {
 
 module.exports = function(app, db) {
 
-	// Login page
-	app.get("/login", function(req, res) {
-		if (req.user != null) {
-			return res.redirect("/");
-		}
-
-		res.render("account/login", {
-			socialAuth: checkAvailableSocialAuth()
-		});
-	});
-
 	// Logout
 	app.get("/logout", function(req, res) {
 		req.logout();
@@ -64,22 +53,11 @@ module.exports = function(app, db) {
 		res.redirect("/");
 	});
 
-	// Sign-up
-	app.get("/signup", function(req, res) {
-		if (config.features.disableSignUp === true)
-			return res.redirect("/login");
-
-		res.render("account/signup", {
-			socialAuth: checkAvailableSocialAuth()
-		});
-
-	});
-
 	// User registration
 	app.post("/signup", function(req, res) {
 		if (config.features.disableSignUp === true) {
 			console.log('Signup disabled')
-			return res.redirect("/");
+			return response.json(res, null, {status: 501});
 		}
 
 		req.assert("username", req.t("UsernameCannotBeEmpty")).notEmpty();
@@ -104,8 +82,7 @@ module.exports = function(app, db) {
 		let errors = req.validationErrors();
 
 		if (errors) {
-			req.flash("error", errors);
-			return res.redirect("/signup");
+			return response.json(res, errors, {status: 403});
 		}
 
 		async.waterfall([
@@ -154,11 +131,15 @@ module.exports = function(app, db) {
 						let field = err.message.split(".$")[1];
 						field = field.split(" dup key")[0];
 						field = field.substring(0, field.lastIndexOf("_"));
-						if (field == "email")
-							req.flash("error", { msg: req.t("EmailIsExists") });
-						else
-							req.flash("error", { msg: req.t("UsernameIsExists") });
+						let msg = req.t("UsernameIsExists");
+
+						if (field === "email") {
+							msg = req.t("EmailIsExists");
+						}
+
+						return response.json(res, null, {status: 403, message: msg});
 					}
+
 					done(err, user);
 				});
 			},
@@ -179,9 +160,6 @@ module.exports = function(app, db) {
 							return done(err);
 
 						mailer.send(user.email, subject, html, function(err, info) {
-							//if (err)
-							//	req.flash("error", { msg: "Unable to send email to " + user.email});
-
 							done(null, user);
 						});
 					});
@@ -198,11 +176,9 @@ module.exports = function(app, db) {
 							return done(err);
 
 						mailer.send(user.email, subject, html, function(err, info) {
-							if (err)
-								req.flash("error", { msg: req.t("UnableToSendEmail", user) });
-							else
-								req.flash("info", { msg: req.t("emailSentVerifyLink")});
-
+							if (err) {
+								return response.json(res, null, {status: 402, message: req.t("UnableToSendEmail", user)});
+							}
 
 							done(err, user);
 						});
@@ -245,7 +221,6 @@ module.exports = function(app, db) {
 							return done(err);
 
 						if (!user) {
-							req.flash("error", { msg: req.t("AccountVerificationExpired") });
 							return done("Verification is invalid!");
 						}
 
@@ -255,7 +230,6 @@ module.exports = function(app, db) {
 
 						user.save(function(err) {
 							if (err) {
-								req.flash("error", { msg: req.t("UnableModifyAccountDetails") });
 								return done(err);
 							}
 
@@ -280,9 +254,6 @@ module.exports = function(app, db) {
 						return done(err);
 
 					mailer.send(user.email, subject, html, function(err, info) {
-						//if (err)
-						//	req.flash("error", { msg: "Unable to send email to " + user.email});
-
 						done(null, user);
 					});
 				});
@@ -319,7 +290,6 @@ module.exports = function(app, db) {
 							return done(err);
 
 						if (!user) {
-							req.flash("error", { msg: req.t("PasswordlessTokenExpired") });
 							return done("Token is invalid!");
 						}
 
@@ -332,7 +302,6 @@ module.exports = function(app, db) {
 
 						user.save(function(err) {
 							if (err) {
-								req.flash("error", { msg: req.t("UnableModifyAccountDetails") });
 								return done(err);
 							}
 
@@ -373,8 +342,7 @@ module.exports = function(app, db) {
 
 		let errors = req.validationErrors();
 		if (errors) {
-			req.flash("error", errors);
-			return res.redirect("back");
+			return response.json(res, errors, {status: 402});
 		}
 
 		async.waterfall([
@@ -388,13 +356,11 @@ module.exports = function(app, db) {
 			function getUserAndSaveToken(token, done) {
 				User.findOne({ email: req.body.email }, function(err, user) {
 					if (!user) {
-						req.flash("error", { msg: req.t("EmailNotAssociatedToAccount", req.body) });
 						return done(`Email address ${req.body.email} is not registered!`);
 					}
 
 					// Check that the user is not disabled or deleted
 					if (user.status !== 1) {
-						req.flash("error", { msg: req.t("UserDisabledOrDeleted")});
 						return done(req.t("UserDisabledOrDeleted"));
 					}
 
@@ -422,10 +388,9 @@ module.exports = function(app, db) {
 						return done(err);
 
 					mailer.send(user.email, subject, html, function(err, info) {
-						if (err)
-							req.flash("error", { msg: req.t("UnableToSendEmail", user) });
-						else
-							req.flash("info", { msg: req.t("emailSentPasswordResetLink", user) });
+						if (err) {
+							return response.json(res, null, {status: 402, message: req.t("UnableToSendEmail", user)});
+						}
 
 						done(err);
 					});
@@ -455,8 +420,7 @@ module.exports = function(app, db) {
 					return next(err);
 
 				if (!user) {
-					req.flash("error", { msg: req.t("PasswordResetTokenExpired") });
-					return res.redirect("/forgot");
+					return response.json(res, null, {status: 402, message: req.t("PasswordResetTokenExpired")});
 				}
 
 				res.render("account/reset");
@@ -470,8 +434,7 @@ module.exports = function(app, db) {
 
 		const errors = req.validationErrors();
 		if (errors) {
-			req.flash("error", errors);
-			return res.redirect("back");
+			return response.json(res, errors, {status: 402})
 		}
 
 		async.waterfall([
@@ -485,8 +448,7 @@ module.exports = function(app, db) {
 							return done(err);
 
 						if (!user) {
-							req.flash("error", { msg: req.t("PasswordResetTokenExpired") });
-							return done("Password reset token is invalid or has expired.");
+							return response.json(res, null, {status: 402, message: "Password reset token is invalid or has expired."});
 						}
 
 						// Clear passwordless flag, if the user change password
@@ -524,10 +486,9 @@ module.exports = function(app, db) {
 						return done(err);
 
 					mailer.send(user.email, subject, html, function(err, info) {
-						if (err)
-							req.flash("error", { msg: req.t("UnableToSendEmail", user) });
-						else
-							req.flash("info", { msg: req.t("PasswordChanged")});
+						if (err) {
+							return response.json(res, null, {status: 402, message: req.t("UnableToSendEmail", user)});
+						}
 
 						done(err);
 					});

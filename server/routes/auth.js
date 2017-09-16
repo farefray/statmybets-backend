@@ -11,7 +11,7 @@ let express = require("express");
 
 let mailer = require("../libs/mailer");
 let User = require("../models/user");
-let Response = require("../core/response");
+let response = require("../core/response");
 
 /**
 	* Generate JSON or HTML response to client,
@@ -19,74 +19,33 @@ let Response = require("../core/response");
 	* JSON response. Else we redirect to an URL
 	* which defined in `redirect` parameter.
 	*
-	* If req.flash contains errors, we send back error messages too.
-	*
 	* @param  {Object} req      request object
 	* @param  {Object} res      response object
-	* @param  {String} redirect redirect site URL.
-	* @param  {Object} err      Error object.
+	* @param  {Object} errcode      Error object.
+	* @param  {Objects} errors Errors
 	*/
-function respond(req, res, redirect, err) {
-	if (req.accepts("json") && !req.accepts("html")) {
-
-		let flash = req.flash();
-		console.log(flash)
-		if (flash && flash.error && flash.error.length > 0) {
-
-			let errMessage = flash.error[0].msg;
-			Response.json(res, null, err || Response.REQUEST_FAILED, errMessage);
-		} else {
-			let successData = "OK";
-			if (flash && flash.info && flash.info.length > 0) {
-				successData = flash.info[0].msg;
-			}
-
-			if (redirect) {
-				successData = redirect;
-			}
-
-			Response.json(res, successData, err);
-		}
-
-	}
-	else if (redirect) {
-		// Redirect to the original url
-		if (req.session.returnTo) {
-			redirect = req.session.returnTo;
-			delete req.session.returnTo;
-		}
-
-		res.redirect(redirect);
-	}
-}
-
 module.exports = function (app, db) {
 
 	let authRouter = express.Router();
 
 	authRouter.post("/local", function (req, res, next) {
-		console.log('here');
-		console.log(req.body);
 		req.assert("username", req.t("UsernameCannotBeEmpty")).notEmpty();
 
 		let errors = req.validationErrors();
 		if (errors) {
-			req.flash("error", errors);
-			return respond(req, res, "/login", Response.BAD_REQUEST);
+			return response.json(res, errors, {status: 402});
 		}
 
 		if (req.body.password) {
 			// Login with password
 			passport.authenticate("local", function (err, user, info) {
 				if (!user) {
-					req.flash("error", {msg: info.message});
-					return respond(req, res, "/login");
+					return response.json(res, null, {status: 401, message: info.message});
 				}
 
 				req.login(user, function (err) {
 					if (err) {
-						req.flash("error", {msg: err});
-						return respond(req, res, "/login");
+						return response.json(res, null, {status: 401, message: err});
 					}
 
 					// Success authentication
@@ -97,7 +56,7 @@ module.exports = function (app, db) {
 						req.user.password = undefined;
 						req.user.salt = undefined;
 
-						respond(req, res, "/");
+						response(res);
 					});
 
 				});
@@ -123,13 +82,11 @@ module.exports = function (app, db) {
 						]
 					}, function (err, user) {
 						if (!user) {
-							req.flash("error", {msg: req.t("UsernameIsNotAssociated", {username: username})});
 							return done("Invalid username or email: " + username);
 						}
 
 						// Check that the user is not disabled or deleted
 						if (user.status !== 1) {
-							req.flash("error", {msg: req.t("UserDisabledOrDeleted")});
 							return done(`User '${username} is disabled or deleted!`);
 						}
 
@@ -158,10 +115,10 @@ module.exports = function (app, db) {
 							return done(err);
 
 						mailer.send(user.email, subject, html, function (err, info) {
-							if (err)
+							/*if (err)
 								req.flash("error", {msg: req.t("UnableToSendEmail", user)});
 							else
-								req.flash("info", {msg: req.t("emailSentWithMagicLink", user)});
+								req.flash("info", {msg: req.t("emailSentWithMagicLink", user)});*/
 
 							done(err);
 						});
@@ -173,7 +130,7 @@ module.exports = function (app, db) {
 					logger.error(err);
 				}
 
-				respond(req, res, "back");
+				response(res);
 			});
 		}
 

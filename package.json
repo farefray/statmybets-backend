@@ -43,7 +43,6 @@
     "csurf": "1.9.0",
     "ejs": "^2.5.7",
     "express": "4.15.3",
-    "express-flash": "0.0.2",
     "express-list-endpoints": "3.0.0",
     "express-session": "1.15.3",
     "express-status-monitor": "0.1.9",
