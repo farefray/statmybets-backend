@@ -50,7 +50,7 @@
 	"EmailIsNotValid": "Email is not valid!",
 	"PasswordCannotBeEmpty": "Password cannot be empty!",
 	"UsernameCannotBeEmpty": "Username cannot be empty!",
-	"UsernameIsNotAssociated": "The username {{username}} is not associated with any account.",
+	"UsernameIsNotAssociated": "Unsuccessful login with account name - {{username}}.",
 	"InvalidUsername": "Invalid username: {{username}}",
 	"EmailIsExists": "An account with that email address already exists!",
 	"UsernameIsExists": "An account with that username already exists!",
@@ -74,7 +74,7 @@
 	"InvalidPassword": "Invalid password",
 	"UserDisabledOrDeleted": "Deleted or disabled user account!",
 	"InvalidOAuthProvider": "Invalid OAuth provider!",
-	
+
 	"UnknowUsernameOrEmail": "Unknow username or e-mail",
 
 	"mailSubjectWelcome": "✔ Welcome to {{app.title}}!",
@@ -85,5 +85,5 @@
 	"emailSentWithMagicLink": "An email has been sent to {{email}} with magic link. Please check your spam folder if it does not arrive.",
 	"emailSentVerifyLink": "Please check your email to verify your account. Thanks for signing up!",
 	"emailSentPasswordResetLink": "An email has been sent to {{email}} with further instructions."
-	
+
 }

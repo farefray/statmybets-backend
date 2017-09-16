@@ -73,22 +73,26 @@ module.exports = function(app, db) {
 			socialAuth: checkAvailableSocialAuth()
 		});
 
-	});	
+	});
 
 	// User registration
 	app.post("/signup", function(req, res) {
-		if (config.features.disableSignUp === true)
+		if (config.features.disableSignUp === true) {
+			console.log('Signup disabled')
 			return res.redirect("/");
+		}
 
-		req.assert("name", req.t("NameCannotBeEmpty")).notEmpty();
+		req.assert("username", req.t("UsernameCannotBeEmpty")).notEmpty();
+		// TODO UsernameIsExists
+
 		req.assert("email", req.t("EmailCannotBeEmpty")).notEmpty();
 		req.assert("email", req.t("EmailIsNotValid")).isEmail();
 		req.sanitize("email").normalizeEmail({ remove_dots: false });
 
 		//req.assert("username", req.t("UsernameCannotBeEmpty")).notEmpty();
-		
-		if (!req.body.username)
-			req.body.username = req.body.email;
+
+		/*if (!req.body.username)
+			req.body.username = req.body.email;*/
 
 		req.sanitize("passwordless").toBoolean();
 		let passwordless = req.body.passwordless === true;
@@ -129,7 +133,6 @@ module.exports = function(app, db) {
 			function createUser(token, password, done) {
 
 				let user = new User({
-					fullName: req.body.name,
 					email: req.body.email,
 					username: req.body.username,
 					password: password,
@@ -150,10 +153,10 @@ module.exports = function(app, db) {
 					if (err && err.code === 11000) {
 						let field = err.message.split(".$")[1];
 						field = field.split(" dup key")[0];
-						field = field.substring(0, field.lastIndexOf("_"));						
+						field = field.substring(0, field.lastIndexOf("_"));
 						if (field == "email")
 							req.flash("error", { msg: req.t("EmailIsExists") });
-						else 
+						else
 							req.flash("error", { msg: req.t("UsernameIsExists") });
 					}
 					done(err, user);
@@ -181,7 +184,7 @@ module.exports = function(app, db) {
 
 							done(null, user);
 						});
-					});	
+					});
 
 				} else {
 					// Send verification email
@@ -203,7 +206,7 @@ module.exports = function(app, db) {
 
 							done(err, user);
 						});
-					});					
+					});
 				}
 			}
 
@@ -231,14 +234,14 @@ module.exports = function(app, db) {
 	app.get("/verify/:token", function(req, res) {
 		if (req.isAuthenticated())
 			return res.redirect("/");
-		
+
 		async.waterfall([
 
 			function checkToken(done) {
-				User			
+				User
 					.findOne({ verifyToken: req.params.token })
 					.exec( (err, user) => {
-						if (err) 
+						if (err)
 							return done(err);
 
 						if (!user) {
@@ -258,7 +261,7 @@ module.exports = function(app, db) {
 
 							done(null, user);
 						});
-					});			
+					});
 			},
 
 			function sendWelcomeEmailToUser(user, done) {
@@ -282,13 +285,13 @@ module.exports = function(app, db) {
 
 						done(null, user);
 					});
-				});	
+				});
 			},
 
 			function loginUser(user, done) {
 				req.login(user, function(err) {
 					done(err, user);
-				});				
+				});
 			}
 
 		], function(err) {
@@ -299,20 +302,20 @@ module.exports = function(app, db) {
 
 			res.redirect("/");
 		});
-	});	
+	});
 
 	// Passwordless login
 	app.get("/passwordless/:token", function(req, res) {
 		if (req.isAuthenticated())
 			return res.redirect("/");
-		
+
 		async.waterfall([
 
 			function checkToken(done) {
-				User			
+				User
 					.findOne({ passwordLessToken: req.params.token })
 					.exec( (err, user) => {
-						if (err) 
+						if (err)
 							return done(err);
 
 						if (!user) {
@@ -335,13 +338,13 @@ module.exports = function(app, db) {
 
 							done(null, user);
 						});
-					});			
+					});
 			},
 
 			function loginUser(user, done) {
 				req.login(user, function(err) {
 					done(err, user);
-				});				
+				});
 			}
 
 		], function(err) {
@@ -352,27 +355,27 @@ module.exports = function(app, db) {
 
 			res.redirect("/");
 		});
-	});	
+	});
 
 	// Forgot password
 	app.get("/forgot", function(req, res) {
 		if (req.isAuthenticated())
 			return res.redirect("/");
-		
+
 		res.render("account/forgot");
-	});	
+	});
 
 	// Forgot password
 	app.post("/forgot", function(req, res) {
 		req.assert("email", req.t("EmailIsNotValid")).isEmail();
 		req.assert("email", req.t("EmailCannotBeEmpty")).notEmpty();
 		req.sanitize("email").normalizeEmail({ remove_dots: false });
-		
+
 		let errors = req.validationErrors();
 		if (errors) {
 			req.flash("error", errors);
 			return res.redirect("back");
-		}	
+		}
 
 		async.waterfall([
 
@@ -399,7 +402,7 @@ module.exports = function(app, db) {
 					user.resetPasswordExpires = Date.now() + 3600000; // expire in 1 hour
 					user.save(function(err) {
 						done(err, token, user);
-					});					
+					});
 				});
 			},
 
@@ -417,7 +420,7 @@ module.exports = function(app, db) {
 				}, function(err, html) {
 					if (err)
 						return done(err);
-					
+
 					mailer.send(user.email, subject, html, function(err, info) {
 						if (err)
 							req.flash("error", { msg: req.t("UnableToSendEmail", user) });
@@ -435,7 +438,7 @@ module.exports = function(app, db) {
 
 			res.redirect("back");
 		});
-	});	
+	});
 
 
 
@@ -443,12 +446,12 @@ module.exports = function(app, db) {
 	app.get("/reset/:token", function(req, res, next) {
 		if (req.isAuthenticated())
 			return res.redirect("/");
-		
+
 		User
 			.findOne({ resetPasswordToken: req.params.token })
 			.where("resetPasswordExpires").gt(Date.now())
 			.exec((err, user) => {
-				if (err) 
+				if (err)
 					return next(err);
 
 				if (!user) {
@@ -474,11 +477,11 @@ module.exports = function(app, db) {
 		async.waterfall([
 
 			function checkTokenAndExpires(done) {
-				User			
+				User
 					.findOne({ resetPasswordToken: req.params.token })
 					.where("resetPasswordExpires").gt(Date.now())
 					.exec( (err, user) => {
-						if (err) 
+						if (err)
 							return done(err);
 
 						if (!user) {
@@ -496,14 +499,14 @@ module.exports = function(app, db) {
 						user.lastLogin = Date.now();
 
 						user.save(function(err) {
-							if (err) 
+							if (err)
 								return done(err);
-							
+
 							req.login(user, function(err) {
 								done(err, user);
 							});
 						});
-					});			
+					});
 			},
 
 			function sendPasswordChangeEmailToUser(user, done) {
@@ -545,11 +548,11 @@ module.exports = function(app, db) {
 	app.get("/generateAPIKey", function(req, res) {
 		if (!req.isAuthenticated())
 			return response.json(res, null, response.UNAUTHORIZED);
-		
+
 		User
 			.findById(req.user.id)
 			.exec((err, user) => {
-				if (err) 
+				if (err)
 					return response.json(res, null, response.SERVER_ERROR);
 
 				if (!user) {
@@ -559,14 +562,14 @@ module.exports = function(app, db) {
 				user.apiKey = tokgen();
 
 				user.save((err) => {
-					if (err) 
+					if (err)
 						return response.json(res, null, response.SERVER_ERROR);
 
 					return response.json(res, user);
 				});
 
 			});
-	});	
+	});
 
 	// Unlink social account
 	app.get("/unlink/:provider", function(req, res) {
@@ -579,7 +582,7 @@ module.exports = function(app, db) {
 		User
 			.findById(req.user.id)
 			.exec((err, user) => {
-				if (err) 
+				if (err)
 					return response.json(res, null, response.SERVER_ERROR);
 
 				if (!user) {
@@ -589,12 +592,12 @@ module.exports = function(app, db) {
 				user.socialLinks[req.params.provider] = undefined;
 
 				user.save((err) => {
-					if (err) 
+					if (err)
 						return response.json(res, null, response.SERVER_ERROR);
 
 					return response.json(res, user);
 				});
 
-			});		
-	});		
+			});
+	});
 };
