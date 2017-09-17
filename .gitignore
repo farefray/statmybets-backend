@@ -47,6 +47,7 @@ bower_components
 .sublime-project
 *.sublime-project
 *.sublime-workspace
+.idea
 
 # SVN
 .svn

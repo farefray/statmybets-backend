@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="af99a116-439a-4551-9b41-c4be108288be" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/config/base.js" afterPath="$PROJECT_DIR$/server/config/base.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/core/express.js" afterPath="$PROJECT_DIR$/server/core/express.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/locales/en/frontend.json" afterPath="$PROJECT_DIR$/server/locales/en/frontend.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/models/user.js" afterPath="$PROJECT_DIR$/server/models/user.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/routes/account.js" afterPath="$PROJECT_DIR$/server/routes/account.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/routes/auth.js" afterPath="$PROJECT_DIR$/server/routes/auth.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/yarn.lock" afterPath="$PROJECT_DIR$/yarn.lock" />
-    </list>
+    <list default="true" id="af99a116-439a-4551-9b41-c4be108288be" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
