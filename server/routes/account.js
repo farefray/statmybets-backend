@@ -128,13 +128,10 @@ module.exports = function(app, db) {
 
 				user.save(function(err, user) {
 					if (err && err.code === 11000) {
-						let field = err.message.split(".$")[1];
-						field = field.split(" dup key")[0];
-						field = field.substring(0, field.lastIndexOf("_"));
 						let msg = req.t("UsernameIsExists");
-
-						if (field === "email") {
-							msg = req.t("EmailIsExists");
+						console.log(err);
+						if (err.message && err.message.indexOf('index: email')) {
+								msg = req.t("EmailIsExists");
 						}
 
 						return response.json(res, null, {status: 403, message: msg});
@@ -189,19 +186,10 @@ module.exports = function(app, db) {
 		], function(err, user) {
 			if (err) {
 				logger.error(err);
-				return res.redirect("back");
+				return response.json(res, err, {status: 403});
 			}
 
-			if (user.verified) {
-				req.login(user, function(err) {
-					if (err)
-						logger.error(err);
-
-					return res.redirect("/");
-				});
-			}
-			else
-				res.redirect("/login");
+				return response.json(res, 'OK', {status: 200});
 		});
 	});
 

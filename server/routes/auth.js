@@ -56,7 +56,7 @@ module.exports = function (app, db) {
 						req.user.password = undefined;
 						req.user.salt = undefined;
 
-						response(res);
+						return response.json(res);
 					});
 
 				});
@@ -130,7 +130,7 @@ module.exports = function (app, db) {
 					logger.error(err);
 				}
 
-				response(res);
+				return response.json(res);
 			});
 		}
 

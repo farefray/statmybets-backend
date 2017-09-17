@@ -75,7 +75,7 @@
 	"UserDisabledOrDeleted": "Deleted or disabled user account!",
 	"InvalidOAuthProvider": "Invalid OAuth provider!",
 
-	"UnknowUsernameOrEmail": "Unknow username or e-mail",
+	"UnknowUsernameOrEmail": "User with such password wasn't found",
 
 	"mailSubjectWelcome": "✔ Welcome to {{app.title}}!",
 	"mailSubjectActivate": "✔ Activate your new {{app.title}} account!",

@@ -15,7 +15,7 @@ let cookieParser	= require("cookie-parser");
 let validator 		= require("express-validator");
 let csrf 			= require("csurf");
 let netjet			= require("netjet");
-
+let cors = require("cors");
 let session 		= require("express-session");
 let compress 		= require("compression");
 let methodOverride 	= require("method-override");
@@ -68,6 +68,7 @@ function initMiddleware(app) {
 	app.set("port", config.port);
 
 	// Request body parsing middleware should be above methodOverride
+	app.use(cors());
 	app.use(bodyParser.urlencoded({extended: true	}));
 	app.use(validator());
 	app.use(bodyParser.json());
