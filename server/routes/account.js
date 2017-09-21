@@ -46,6 +46,18 @@ function checkAvailableSocialAuth() {
 
 module.exports = function(app, db) {
 
+    app.get("/checkLogin", async(ctx, next) => {
+
+        await passport.authenticate('jwt', function (err, user) {
+            if (user) {
+                ctx.body = "hello " + user.displayName;
+            } else {
+                ctx.body = "No such user";
+                console.log("err", err)
+            }
+        } )(ctx, next)
+    });
+
 	// Logout
 	app.get("/logout", function(req, res) {
 		req.logout();

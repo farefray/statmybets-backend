@@ -12,7 +12,8 @@ let express = require("express");
 let mailer = require("../libs/mailer");
 let User = require("../models/user");
 let response = require("../core/response");
-
+const jwt = require('jsonwebtoken');
+const jwtsecret = "jwtsecret"; //TODO
 /**
 	* Generate JSON or HTML response to client,
 	* If browser accept JSON and not HTML, we send
@@ -43,7 +44,9 @@ module.exports = function (app, db) {
 					return response.json(res, null, {status: 401, message: info.message});
 				}
 
-				req.login(user, function (err) {
+				req.login(user, {
+					session: false
+				}, function (err) {
 					if (err) {
 						return response.json(res, null, {status: 401, message: err});
 					}
@@ -52,11 +55,16 @@ module.exports = function (app, db) {
 					// Update user's record with login time
 					req.user.lastLogin = Date.now();
 					req.user.save(function () {
-						// Remove sensitive data before login
-						req.user.password = undefined;
-						req.user.salt = undefined;
+                        //--payload - информация которую мы храним в токене и можем из него получать
+                        const payload = {
+                            id: user.id,
+                            displayName: user.displayName,
+                            email: user.email
+                        };
 
-						return response.json(res);
+                        const token = jwt.sign(payload, jwtsecret); //здесь создается JWT
+						//return response.json({user: 'test', token: 'JWT ' + token});
+                        return response.json(res, payload);
 					});
 
 				});

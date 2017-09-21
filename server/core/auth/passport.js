@@ -12,11 +12,16 @@ if (!WEBPACK_BUNDLE) require("require-webpack-compat")(module, require);
 
 let User 			= require("../../models/user");
 
+const JwtStrategy = require('passport-jwt').Strategy; // авторизация через JWT
+const ExtractJwt = require('passport-jwt').ExtractJwt; // авторизация через JWT
+const jwtsecret = "mysecretkey"; // ключ для подписи JWT
+const jwt = require('jsonwebtoken'); // аутентификация по JWT для hhtp
+
 module.exports = function(app) {
 
 	// Use passport session
 	app.use(passport.initialize());
-	app.use(passport.session());	
+	app.use(passport.session()); // TODO: dont need sessions
 
 	passport.serializeUser(function(user, done) {
 		return done(null, user.id);

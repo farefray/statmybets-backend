@@ -8,7 +8,8 @@ module.exports = function() {
 	passport.use(new LocalStrategy({
 		usernameField: "username",
 		passwordField: "password",
-		passReqToCallback : true
+		passReqToCallback : true,
+        session: false
 	}, function(req, username, password, done) {
 		return User.findOne({
 			$or: [ 
