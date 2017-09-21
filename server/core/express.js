@@ -9,15 +9,13 @@ let http 			= require("http");
 let path 			= require("path");
 
 let moment 			= require("moment");
-let flash 			= require("express-flash");
-let favicon 		= require("serve-favicon");
 let morgan 			= require("morgan");
 let bodyParser 		= require("body-parser");
 let cookieParser	= require("cookie-parser");
 let validator 		= require("express-validator");
 let csrf 			= require("csurf");
 let netjet			= require("netjet");
-
+let cors = require("cors");
 let session 		= require("express-session");
 let compress 		= require("compression");
 let methodOverride 	= require("method-override");
@@ -34,7 +32,7 @@ let serverFolder = path.normalize(path.join(config.rootPath, "server"));
 
 /**
  * Initialize local variables
- * 
+ *
  * @param {any} app
  */
 function initLocalVariables(app) {
@@ -53,7 +51,7 @@ function initLocalVariables(app) {
 
 /**
  * Initialize middlewares
- * 
+ *
  * @param {any} app
  */
 function initMiddleware(app) {
@@ -70,12 +68,10 @@ function initMiddleware(app) {
 	app.set("port", config.port);
 
 	// Request body parsing middleware should be above methodOverride
-	app.use(bodyParser.urlencoded({
-		extended: true,
-		limit: config.contentMaxLength * 2
-	}));
+	app.use(cors());
+	app.use(bodyParser.urlencoded({extended: true	}));
 	app.use(validator());
-	app.use(bodyParser.json());	
+	app.use(bodyParser.json());
 	app.use(methodOverride());
 
 	if (config.isProductionMode()) {
@@ -91,15 +87,10 @@ function initMiddleware(app) {
 		app.use(express["static"](path.join(serverFolder, "public")));
 	}
 
-	// Favicon
-	app.use(favicon(path.join(serverFolder, "public", "favicon.ico")));
-
 	// Cookie parser should be above session
 	app.use(cookieParser());
 
 	app.set("etag", true); // other values 'weak', 'strong'
-
-	app.use(flash());	
 
 	if (config.isDevMode()) {
 		// Init morgan
@@ -109,19 +100,19 @@ function initMiddleware(app) {
 		lmStream.writable = true;
 		lmStream.write = function(data) {
 			return logger.debug(data);
-		};	
+		};
 
 		app.use(morgan("dev", {
 			stream: lmStream
 		}));
 
-		// app.use(require('express-status-monitor')());
+		app.use(require('express-status-monitor')());
 	}
 }
 
 /**
  * Initialize i18next module for localization
- * 
+ *
  * @param {any} app
  */
 function initI18N(app) {
@@ -177,10 +168,10 @@ function initI18N(app) {
 	app.use(i18nextExpress.handle(i18next));
 
 	// multiload backend route
-	app.get("/locales/resources.json", i18nextExpress.getResourcesHandler(i18next));	
+	app.get("/locales/resources.json", i18nextExpress.getResourcesHandler(i18next));
 
 	// missing keys
-	app.post("/locales/add/:lng/:ns", i18nextExpress.missingKeyHandler(i18next));		
+	app.post("/locales/add/:lng/:ns", i18nextExpress.missingKeyHandler(i18next));
 }
 
 /**
@@ -196,7 +187,7 @@ function initViewEngine(app) {
 
 /**
  * Initialize session handler (mongo-store)
- * 
+ *
  * @param {any} app
  * @param {any} db
  */
@@ -218,7 +209,7 @@ function initSession(app, db) {
 
 /**
  * Initiliaze Helmet security module
- * 
+ *
  * @param {any} app
  */
 function initHelmetHeaders(app) {
@@ -233,7 +224,7 @@ function initHelmetHeaders(app) {
 
 /**
  * Initialize authentication & CSRF
- * 
+ *
  * @param {any} app
  */
 function initAuth(app) {
@@ -258,8 +249,8 @@ function initAuth(app) {
 
 /**
  * Initialize Webpack hot reload module.
- * 	Note: Only in development mode 
- * 
+ * 	Note: Only in development mode
+ *
  * @param {any} app
  */
 function initWebpack(app) {
