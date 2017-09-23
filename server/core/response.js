@@ -63,7 +63,7 @@ module.exports = {
 		* @return {json} If res assigned, return with res, otherwise return the response JSON object
 		*/
 	json(res, data, err = null) {
-		let response = {}
+		let response = data ? data : {};
 
 		if (err) {
 			response.error = err
@@ -71,15 +71,8 @@ module.exports = {
 			if (err.message) {
 				response.error.message = err.message;
 			}
-
-			response.data = data
-
-			return res ? res.status(response.status).json(response) : response
 		}
 
-		response.status = 200
-		response.data = data
-
-		return res ? res.json(response) : response
+		return err && err.status ? res.status(err.status).json(response) : res.json(response);
 	}
 };

@@ -46,17 +46,26 @@ function checkAvailableSocialAuth() {
 
 module.exports = function(app, db) {
 
-    app.get("/checkLogin", async(ctx, next) => {
+	app.get("/checkLogin", function(req, res) {
+		req.logout();
+		req.session.destroy();
+		res.redirect("/");
+	});
 
-        await passport.authenticate('jwt', function (err, user) {
-            if (user) {
-                ctx.body = "hello " + user.displayName;
-            } else {
-                ctx.body = "No such user";
-                console.log("err", err)
-            }
-        } )(ctx, next)
-    });
+		app.get("/checkLogin", function(req, res) {
+			passport.authenticate("jwt", function (err, user) {
+				let status = 501;
+				if (user) {
+					res.body = "hello " + user.displayName;
+					status = 200;
+				} else {
+					res.body = "No such user";
+					console.log("err", err);
+				}
+
+				return response.json(res, null, {status: status});
+			});
+		});
 
 	// Logout
 	app.get("/logout", function(req, res) {
@@ -142,7 +151,7 @@ module.exports = function(app, db) {
 					if (err && err.code === 11000) {
 						let msg = req.t("UsernameIsExists");
 						console.log(err);
-						if (err.message && err.message.indexOf('index: email')) {
+						if (err.message && err.message.indexOf('index: email') >= 0) {
 								msg = req.t("EmailIsExists");
 						}
 
@@ -201,7 +210,7 @@ module.exports = function(app, db) {
 				return response.json(res, err, {status: 403});
 			}
 
-				return response.json(res, 'OK', {status: 200});
+				return response.json(res, user, {status: 200});
 		});
 	});
 

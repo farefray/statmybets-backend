@@ -55,16 +55,17 @@ module.exports = function (app, db) {
 					// Update user's record with login time
 					req.user.lastLogin = Date.now();
 					req.user.save(function () {
-                        //--payload - информация которую мы храним в токене и можем из него получать
-                        const payload = {
-                            id: user.id,
-                            displayName: user.displayName,
-                            email: user.email
-                        };
+						//--payload - информация которую мы храним в токене и можем из него получать
+						let payload = {
+										id: user.id,
+										email: user.email,
+										token: null
+						};
 
-                        const token = jwt.sign(payload, jwtsecret); //здесь создается JWT
+						const token = jwt.sign(payload, jwtsecret); //здесь создается JWT
+						payload.token = token;
 						//return response.json({user: 'test', token: 'JWT ' + token});
-                        return response.json(res, payload);
+						return response.json(res, payload);
 					});
 
 				});
