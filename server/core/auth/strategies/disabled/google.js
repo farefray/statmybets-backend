@@ -1,12 +1,12 @@
 "use strict";
 
-let logger 	= require("../../logger");
-let config 	= require("../../../config");
-let helper 	= require("../helper");
+let logger 	= require("../../../logger");
+let config 	= require("../../../../config/index");
+let helper 	= require("../../helper");
 
 let passport 		= require("passport");
 let GoogleStrategy  = require("passport-google-oauth").OAuth2Strategy;
-let User 			= require("../../../models/user");
+let User 			= require("../../../../models/user");
 
 // https://console.developers.google.com/project/express-mongo-boilerplate/apiui/consent
 module.exports = function() {
@@ -21,7 +21,7 @@ module.exports = function() {
 			// logger.info("Received profile: ", profile);
 
 			helper.linkToSocialAccount({
-				req, 
+				req,
 				accessToken,
 				refreshToken,
 				profile,

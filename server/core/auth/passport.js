@@ -12,16 +12,10 @@ if (!WEBPACK_BUNDLE) require("require-webpack-compat")(module, require);
 
 let User 			= require("../../models/user");
 
-const JwtStrategy = require('passport-jwt').Strategy; // авторизация через JWT
-const ExtractJwt = require('passport-jwt').ExtractJwt; // авторизация через JWT
-const jwtsecret = "mysecretkey"; // ключ для подписи JWT
-const jwt = require('jsonwebtoken'); // аутентификация по JWT для hhtp
-
 module.exports = function(app) {
 
 	// Use passport session
 	app.use(passport.initialize());
-	app.use(passport.session()); // TODO: dont need sessions
 
 	passport.serializeUser(function(user, done) {
 		return done(null, user.id);
@@ -33,7 +27,7 @@ module.exports = function(app) {
 		}, "-password", function(err, user) {
 			if (err)
 				return done(err);
-			
+
 			// Check that the user is not disabled or deleted
 			if (user.status !== 1)
 				return done(null, false);
@@ -45,7 +39,7 @@ module.exports = function(app) {
 	logger.info("");
 	logger.info(chalk.bold("Search passport strategies..."));
 
-	function requireAll(r) { 
+	function requireAll(r) {
 		return r.keys().map(function(module) {
 			logger.info("  Loading passport strategy file " + path.basename(module) + "...");
 			let strategy = r(module);
@@ -54,5 +48,5 @@ module.exports = function(app) {
 			return strategy;
 		});
 	}
-	let modules = requireAll(require.context("./strategies", true, /\.js$/));
+	let modules = requireAll(require.context("./strategies", false, /\.js$/));
 };

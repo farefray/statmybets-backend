@@ -1,6 +1,10 @@
 "use strict";
 
 module.exports = {
+	OK: {
+		status: 200,
+		type: "OK"
+	},
 
 	BAD_REQUEST: {
 		status: 400,
@@ -12,12 +16,6 @@ module.exports = {
 		status: 401,
 		type: "UNAUTHORIZED",
 		message: "Unauthorized. Please login first!"
-	},
-
-	REQUEST_FAILED: {
-		status: 402,
-		type: "REQUEST_FAILED",
-		message: "Request failed!"
 	},
 
 	FORBIDDEN: {
@@ -62,17 +60,29 @@ module.exports = {
 		* @param  {Object} err         Error object
 		* @return {json} If res assigned, return with res, otherwise return the response JSON object
 		*/
-	json(res, data, err = null) {
+	json(res, data, err = this.OK) {
 		let response = data ? data : {};
+		if (!(response instanceof Object)) {
+			response = {
+				message: response
+			};
+		}
 
+		let status = 200;
+
+		console.log(err)
 		if (err) {
-			response.error = err
-			response.status = err.status || 500
-			if (err.message) {
-				response.error.message = err.message;
+			if(err.status) {
+				status = err.status;
+			}
+
+			if(response.message === undefined && err.message) {
+				response.message = err.message;
 			}
 		}
 
-		return err && err.status ? res.status(err.status).json(response) : res.json(response);
+		console.log(status)
+		console.log(response)
+		return res.status(status).json(response);
 	}
 };

@@ -15,6 +15,8 @@ let response 	= require("../core/response");
 let mailer 		= require("../libs/mailer");
 
 let User 		= require("../models/user");
+const jwt = require('jsonwebtoken');
+const jwtsecret = "jwtsecret"; //TODO
 
 /**
  * Check what social API are configured. We only show
@@ -46,39 +48,25 @@ function checkAvailableSocialAuth() {
 
 module.exports = function(app, db) {
 
-	app.get("/checkLogin", function(req, res) {
-		req.logout();
-		req.session.destroy();
-		res.redirect("/");
-	});
-
-		app.get("/checkLogin", function(req, res) {
-			passport.authenticate("jwt", function (err, user) {
-				let status = 501;
-				if (user) {
-					res.body = "hello " + user.displayName;
-					status = 200;
-				} else {
-					res.body = "No such user";
-					console.log("err", err);
+		app.post("/verifyLogin", function(req, res) {
+			req.assert("token", false).notEmpty();
+			req.assert("id", false).notEmpty();
+			req.assert("email", false).notEmpty();
+			jwt.verify(req.body.token, jwtsecret, function(err, decoded) {
+				if(err === null && decoded && decoded.id === req.body.id && decoded.email === req.body.email) {
+					// verificated token
+					return response.json(res, "OK", response.OK);
 				}
 
-				return response.json(res, null, {status: status});
+				return response.json(res, null, response.UNAUTHORIZED);
 			});
 		});
-
-	// Logout
-	app.get("/logout", function(req, res) {
-		req.logout();
-		req.session.destroy();
-		res.redirect("/");
-	});
 
 	// User registration
 	app.post("/signup", function(req, res) {
 		if (config.features.disableSignUp === true) {
 			console.log('Signup disabled')
-			return response.json(res, null, {status: 501});
+			return response.json(res, null, response.NOT_IMPLEMENTED);
 		}
 
 		req.assert("username", req.t("UsernameCannotBeEmpty")).notEmpty();
@@ -103,7 +91,7 @@ module.exports = function(app, db) {
 		let errors = req.validationErrors();
 
 		if (errors) {
-			return response.json(res, errors, {status: 403});
+			return response.json(res, errors, response.BAD_REQUEST);
 		}
 
 		async.waterfall([
@@ -155,7 +143,7 @@ module.exports = function(app, db) {
 								msg = req.t("EmailIsExists");
 						}
 
-						return response.json(res, null, {status: 403, message: msg});
+						return response.json(res, msg, response.BAD_REQUEST);
 					}
 
 					done(err, user);
@@ -207,10 +195,10 @@ module.exports = function(app, db) {
 		], function(err, user) {
 			if (err) {
 				logger.error(err);
-				return response.json(res, err, {status: 403});
+				return response.json(res, err, response.BAD_REQUEST);
 			}
 
-				return response.json(res, user, {status: 200});
+				return response.json(res, user, response.OK);
 		});
 	});
 
@@ -351,6 +339,7 @@ module.exports = function(app, db) {
 
 		let errors = req.validationErrors();
 		if (errors) {
+			// TODO this case
 			return response.json(res, errors, {status: 402});
 		}
 

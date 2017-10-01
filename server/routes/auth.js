@@ -57,11 +57,14 @@ module.exports = function (app, db) {
 					req.user.save(function () {
 						//--payload - информация которую мы храним в токене и можем из него получать
 						let payload = {
-										id: user.id,
-										email: user.email,
-										token: null
+							id: user.id,
+							email: user.email,
+							username: user.username,
+							roles: user.roles,
+							token: null
 						};
 
+						console.log(user);
 						const token = jwt.sign(payload, jwtsecret); //здесь создается JWT
 						payload.token = token;
 						//return response.json({user: 'test', token: 'JWT ' + token});

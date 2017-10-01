@@ -1,12 +1,12 @@
 "use strict";
 
-let logger 	= require("../../logger");
-let config 	= require("../../../config");
-let helper 	= require("../helper");
+let logger 	= require("../../../logger");
+let config 	= require("../../../../config/index");
+let helper 	= require("../../helper");
 
 let passport 			= require("passport");
 let FacebookStrategy  	= require("passport-facebook").Strategy;
-let User 				= require("../../../models/user");
+let User 				= require("../../../../models/user");
 
 // https://developers.facebook.com/apps/
 module.exports = function() {
@@ -20,9 +20,9 @@ module.exports = function() {
 			passReqToCallback: true
 		}, function(req, accessToken, refreshToken, profile, done) {
 			//logger.info("Received profile: ", profile);
-			
+
 			helper.linkToSocialAccount({
-				req, 
+				req,
 				accessToken,
 				refreshToken,
 				profile,
