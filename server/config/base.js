@@ -11,7 +11,7 @@ module.exports = {
 		keywords: pkg.keywords.join(","),
 		url: "http://localhost:" + (process.env.PORT || 3000) + "/",
 		//googleAnalyticsID: 'UA-xxxxx-x',
-		contactEmail: "hello@vem-app.com"
+		contactEmail: "maksym.fedan@gmail.com"
 	},
 
 	ip: process.env.NODE_IP || "127.0.0.1",

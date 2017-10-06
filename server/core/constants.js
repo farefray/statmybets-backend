@@ -40,6 +40,13 @@ C.append([
 	"ONLY_OWNER_CAN_EDIT_AND_DELETE"
 ], "ERR");
 
+/**
+	* Event sources constants
+	*/
+C.append([
+	"egb",
+	"manual"
+], "SOURCE");
 
 module.exports = C;
 

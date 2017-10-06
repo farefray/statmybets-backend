@@ -16,12 +16,14 @@
 	"PostNotFound": "Post not found!",
 	"InvalidPostID": "Invalid Post ID!",
 
+	"BetNotFound": "Bet not found!",
+
 	"YouHaveAlreadyVotedThisPost": "You have already voted this post!",
 	"YouHaveNotVotedThisPostYet": "You have not voted this post yet!",
 	"OnlyAuthorEditPost": "Only the author can edit this post!",
 	"OnlyAuthorDeletePost": "Only the author can delete this post!",
 	"YouAreNotTheOwner": "You are not the owner!",
-	
+
 
 	"DeviceAdded": "Device added",
 	"DeviceUpdated": "Device updated",
@@ -52,22 +54,22 @@
 
 	"SelectedOfAll": "Selected {{ selected }} of {{ all }}",
 	"Search3dots": "Search...",
-	
-	"Hot": "Hot",	
-	"MostViewed": "Most viewed",	
-	"New": "New",	
-	"NewPost": "New post",	
-	"AllPosts": "All posts",	
-	"MyPosts": "My posts",	
-	"ViewsCount": " Views: {{count}}",	
-	"CreatedAgoByName": "Created {{ago}} by {{name}}",	
-	"EditedAgo": "Edited {{ago}}",	
-	"EditPost": "Edit post",	
-	"DeletePost": "Delete post",	
-	"Title": "Title",	
-	"TitleOfPost": "Title of post",	
-	"Content": "Content",	
-	"ContentOfPost": "Content of post",	
+
+	"Hot": "Hot",
+	"MostViewed": "Most viewed",
+	"New": "New",
+	"NewPost": "New post",
+	"AllPosts": "All posts",
+	"MyPosts": "My posts",
+	"ViewsCount": " Views: {{count}}",
+	"CreatedAgoByName": "Created {{ago}} by {{name}}",
+	"EditedAgo": "Edited {{ago}}",
+	"EditPost": "Edit post",
+	"DeletePost": "Delete post",
+	"Title": "Title",
+	"TitleOfPost": "Title of post",
+	"Content": "Content",
+	"ContentOfPost": "Content of post",
     "Voters": "Voters",
     "LoadMore": "Load more...",
 

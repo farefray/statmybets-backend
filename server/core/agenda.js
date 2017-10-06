@@ -50,10 +50,14 @@ agenda.define("removeUnverifiedAccounts", function(job, done) {
  * Starting agenda
  */
 agenda.on("ready", function() {
-	if (config.isTestMode())
+	if (config.isTestMode()) {
+		logger.info(chalk.yellow("Agenda disabled!"));
 		return;
+	}
 
-	agenda.every("8 hours", "removeUnverifiedAccounts"); 
+
+
+	agenda.every("8 hours", "removeUnverifiedAccounts");
 	agenda.start();
 	logger.info(chalk.yellow("Agenda started!"));
 });

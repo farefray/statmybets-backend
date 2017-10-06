@@ -25,6 +25,9 @@ module.exports = function(app, db) {
 	// Handle Auth routes
 	require("./auth")(app, db);
 
+	// Handle Event routes
+	require("./events")(app, db);
+
 	// Load services routes
 	//require("../applogic/routeHandlers")(app, db);
 	let services = require("../core/services");
@@ -34,5 +37,5 @@ module.exports = function(app, db) {
 	require("./graphql")(app, db);
 
 	// Handle errors
-	require("./errors")(app, db);	
+	require("./errors")(app, db);
 };
