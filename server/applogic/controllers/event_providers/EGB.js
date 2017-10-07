@@ -7,14 +7,20 @@ module.exports = {
 		url: "https://egb.com/bets?st=0&ut=0&f="
 	},
 	methods: {
-		receive() {
-			console.log(this);
-			axios.get(this.url, {})
+		receive(context) {
+			console.log(context.service.url);
+			return axios.get(context.service.url)
 				.then(function (response) {
-					return response;
+					if(response && response.data && response.data.bets) {
+						//TODO parse bets
+						return response.data.bets;
+					}
+
+					return false;
 				})
 				.catch(function (error) {
 					console.log(error);
+					return false;
 				});
 		}
 	}

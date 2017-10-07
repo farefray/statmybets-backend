@@ -144,6 +144,20 @@ class Context {
 	}
 
 	/**
+	 * Create a new Context for initialize providers
+	 *
+	 * @param {any} provider
+	 * @param {any} app
+	 * @param {any} db
+	 * @returns
+	 */
+	static CreateToProviderInit(provider) {
+		let ctx = new Context(provider);
+
+		return ctx;
+	}
+
+	/**
 	 * Initialize new Context from self
 	 *
 	 * @param {any} params

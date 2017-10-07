@@ -8,8 +8,10 @@ let _ 				= require("lodash");
 let	path 			= require("path");
 let chalk 			= require("chalk");
 
+let Context 		= require("../../core/context");
 let _Event 			= require("../.././models/event");
 let Event_Provider = require("../../core/event_provider");
+let response		= require("../../core/response");
 
 /* global WEBPACK_BUNDLE */
 if (!WEBPACK_BUNDLE) require("require-webpack-compat")(module, require);
@@ -38,10 +40,26 @@ let Event_Controller = {
 		}
 	},
 	forceReload() {
-		console.log('im in controller. reloading');
-		// TODO promise async await anything like this
-		let bets = this.providers["EGB"].receive(); // TODO iterate all providers
-		console.log(bets);
+		return new Promise((rs, rj) => {
+			console.log('im in controller. reloading');
+			let self = this;
+			_.forIn(self.providers, (provider) => {
+				if (_.isFunction(provider.receive)) {
+
+					return new Promise((resolve, reject) => {
+						provider.receive(Context.CreateToProviderInit(provider)).then(res => {
+							if(res === false) {
+								return rj(response.BAD_REQUEST);
+							}
+
+							//TODO parse bets to DB
+							console.log(res.length + " bets received");
+							return rs(response.OK);
+						});
+					});
+				}
+			});
+		});
 	}
 };
 
