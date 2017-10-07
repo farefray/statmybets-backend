@@ -1,5 +1,7 @@
 "use strict";
 let axios = require('axios')
+let _ 				= require("lodash");
+let C 				= require("../../../core/constants");
 
 module.exports = {
 	settings: {
@@ -12,8 +14,34 @@ module.exports = {
 			return axios.get(context.service.url)
 				.then(function (response) {
 					if(response && response.data && response.data.bets) {
-						//TODO parse bets
-						return response.data.bets;
+						let events = [];
+						_.forIn(response.data.bets, (bet) => {
+							let event = {
+								id: bet.id,
+								date: bet.date, //todo timezones?
+								game: bet.game,
+								game_league: bet.tourn,
+								odds_1: bet.coef_1,
+								odds_2: bet.coef_2,
+								odds_draw: bet.coef_draw,
+								team_A: {
+									name: bet.gamer_1.nick,
+									flag: bet.gamer_1.flag,
+									ex: ""
+								},
+								team_B: {
+									name: bet.gamer_2.nick,
+									flag: bet.gamer_2.flag,
+									ex: ""
+								},
+								source: C.SOURCE_EGB,
+								verified: true
+							};
+
+							events.push(event);
+						});
+
+						return events;
 					}
 
 					return false;

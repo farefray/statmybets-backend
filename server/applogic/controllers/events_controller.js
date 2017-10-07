@@ -52,13 +52,29 @@ let Event_Controller = {
 								return rj(response.BAD_REQUEST);
 							}
 
-							//TODO parse bets to DB
-							console.log(res.length + " bets received");
-							return rs(response.OK);
+							const total = res.length;
+							let success = 0;
+							_.forIn(res, (event) => {
+								if(self.createEvent(event)) {
+									success++;
+								}
+							});
+
+							return rs({response: response.OK, totalEvents: total, successEvents: success});
 						});
 					});
 				}
 			});
+		});
+	},
+	createEvent(eventInfo) {
+		let event = new _Event(eventInfo);
+		event.save(function(err, e) {
+			if (err && err.code === 11000) {
+				return false;
+			}
+
+			return true;
 		});
 	}
 };
