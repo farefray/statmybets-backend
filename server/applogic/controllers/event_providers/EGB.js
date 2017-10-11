@@ -1,7 +1,7 @@
 "use strict";
 let axios = require('axios')
-let _ 				= require("lodash");
-let C 				= require("../../../core/constants");
+let _ = require("lodash");
+let C = require("../../../core/constants");
 
 module.exports = {
 	settings: {
@@ -13,11 +13,12 @@ module.exports = {
 			console.log(context.service.url);
 			return axios.get(context.service.url)
 				.then(function (response) {
-					if(response && response.data && response.data.bets) {
+					if (response && response.data && response.data.bets) {
 						let events = [];
+
 						_.forIn(response.data.bets, (bet) => {
+
 							let event = {
-								id: bet.id,
 								date: bet.date,
 								game: bet.game,
 								game_league: bet.tourn,
@@ -38,10 +39,10 @@ module.exports = {
 								verified: true
 							};
 
-							if(event.team_A.name.indexOf("(") < 0) {
+							if (event.team_A.name.indexOf("(") < 0) {
 								// Exclude subbets like (Map 1)
-                                events.push(event);
-                            }
+								events.push(event);
+							}
 						});
 
 						return events;

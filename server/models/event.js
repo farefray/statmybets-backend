@@ -24,16 +24,18 @@ let schemaOptions = {
 	toJSON: {
 		virtuals: true
 	},
-	id: false
+	id: false,
+	_id: false
 };
 
 // get events from api (f.e. https://egb.com/bets?st=0&ut=0&f=) , store in BD
 let EventSchema = new Schema({
-	id: {
+	_id: {
 		// External ID based on API where we took that bet (actually ID + SOURCE is unique pair; maybe it can be done with some constrains)
 		type: String,
 		index: true,
-		required: true
+		required: true,
+		unique: true
 	},
 	date: {
 		type: Number,
@@ -86,29 +88,12 @@ let EventSchema = new Schema({
 	verified: {
 		type: Boolean,
 		default: false
-	}
+	},
+	user_id: {
+		type: Number,
+		default: 0
+	},
 }, schemaOptions);
-
-/**
- * Virtual `code` field instead of _id
- */
-EventSchema.virtual("code").get(function() {
-	return this.encodeID();
-});
-
-/**
- * Encode `_id` to `code`
- */
-EventSchema.methods.encodeID = function() {
-	return hashids.encodeHex(this.id + "" + this.source);
-};
-
-/**
- * Decode `code` to `_id`
- */
-EventSchema.methods.decodeID = function(code) {
-	return hashids.decodeHex(code);
-};
 
 /**
  * Pick is only some fields of object
