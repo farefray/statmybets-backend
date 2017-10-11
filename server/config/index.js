@@ -96,6 +96,9 @@ if (module.exports.isTestMode()) {
 else if (module.exports.isProductionMode()) {
 	console.log("Load production config...");
 	config = require("./prod");
+} else {
+    console.log("Load development config...");
+    config = require("./dev");
 }
 
 module.exports = _.defaultsDeep(externalConfig, config, baseConfig, module.exports);
