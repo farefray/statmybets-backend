@@ -24,6 +24,7 @@ let Event_Controller = {
 
 	init() {
 		let self = this;
+        logger.info();
 		logger.info(chalk.bold("Initializing Events controller..."));
 
 		let addProvider = function(schema) {
@@ -34,8 +35,9 @@ let Event_Controller = {
 		let providers = require.context("./event_providers", true, /\.js$/);
 		if (providers) {
 			providers.keys().map(function(module) {
-				logger.info("  Load", path.relative(path.join(__dirname, "..", "event_providers"), module), "event provider...");
+				logger.info("  Loading", path.relative(path.join(__dirname, "..", "event_providers"), module), "event provider...");
 				addProvider(providers(module));
+                // self.forceReload();
 			});
 		}
 	},
@@ -49,6 +51,7 @@ let Event_Controller = {
 					return new Promise((resolve, reject) => {
 						provider.receive(Context.CreateToProviderInit(provider)).then(res => {
 							if(res === false) {
+                                logger.warn(" Cannot load event provider!");
 								return rj(response.BAD_REQUEST);
 							}
 
@@ -60,6 +63,7 @@ let Event_Controller = {
 								}
 							});
 
+                            logger.info("  Loaded ", successs, " from ", total, " events");
 							return rs({response: response.OK, totalEvents: total, successEvents: success});
 						});
 					});

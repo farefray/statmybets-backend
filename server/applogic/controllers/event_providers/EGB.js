@@ -18,7 +18,7 @@ module.exports = {
 						_.forIn(response.data.bets, (bet) => {
 							let event = {
 								id: bet.id,
-								date: bet.date, //todo timezones?
+								date: bet.date,
 								game: bet.game,
 								game_league: bet.tourn,
 								odds_1: bet.coef_1,
@@ -38,7 +38,10 @@ module.exports = {
 								verified: true
 							};
 
-							events.push(event);
+							if(event.team_A.name.indexOf("(") < 0) {
+								// Exclude subbets like (Map 1)
+                                events.push(event);
+                            }
 						});
 
 						return events;
