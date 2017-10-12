@@ -14,7 +14,7 @@ module.exports = {
 		contactEmail: "maksym.fedan@gmail.com"
 	},
 
-	ip: process.env.NODE_IP || "52.50.209.42",
+	ip: process.env.NODE_IP || "127.0.0.1",
 	port: process.env.PORT || 3000,
 
 	rootPath: global.rootPath,
