@@ -28,6 +28,9 @@ module.exports = function(app, db) {
 	// Handle Event routes
 	require("./events")(app, db);
 
+	// Handle Event routes
+	require("./predictions")(app, db);
+
 	// Load services routes
 	//require("../applogic/routeHandlers")(app, db);
 	let services = require("../core/services");

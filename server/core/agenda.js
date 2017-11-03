@@ -8,6 +8,7 @@ let chalk = require("chalk");
 let Agenda = require("agenda");
 
 let User = require("../models/user");
+let Event_Controller = require("../applogic/controllers/events_controller");
 
 let agenda = new Agenda({
 	db: {
@@ -46,6 +47,19 @@ agenda.define("removeUnverifiedAccounts", function(job, done) {
 	}
 });
 
+
+agenda.define("updateEvents", function(job, done) {
+	logger.debug("Running 'updateEvents' process...");
+	try {
+		Event_Controller.forceReload().then(result => {
+			done(result);
+		});
+	} catch (error) {
+		logger.error("Job running exception!");
+		logger.error(error);
+		return done(error);
+	}
+});
 /**
  * Starting agenda
  */
@@ -58,6 +72,7 @@ agenda.on("ready", function() {
 
 
 	agenda.every("8 hours", "removeUnverifiedAccounts");
+	agenda.every("12 hours", "updateEvents");
 	agenda.start();
 	logger.info(chalk.yellow("Agenda started!"));
 });

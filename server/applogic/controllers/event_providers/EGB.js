@@ -39,7 +39,7 @@ module.exports = {
 								verified: true
 							};
 
-							if (event.team_A.name.indexOf("(") < 0) {
+							if (event.team_A.name.indexOf("(") < 0 && (bet.live === false || bet.live === 'false')) {
 								// Exclude subbets like (Map 1)
 								events.push(event);
 							}
