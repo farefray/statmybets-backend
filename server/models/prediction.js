@@ -33,6 +33,23 @@ let PredictionSchema = new Schema({
 		type: Number,
 		required: true
 	},
+	stake: {
+		type: Number,
+		required: true
+	},
+	status: {
+		type: [
+			{
+				type: String,
+				"enum": [
+					C.STATUS_WON,
+					C.STATUS_LOST,
+					C.STATUS_PENDING
+				]
+			}
+		],
+		default: [C.STATUS_PENDING]
+	},
 	final_odds: {
 		type: Number,
 		default: 1

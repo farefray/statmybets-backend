@@ -48,6 +48,16 @@ C.append([
 	"manual"
 ], "SOURCE");
 
+
+/**
+	* Predictions status constants
+	*/
+C.append([
+	"WON",
+	"LOST",
+	"PENDING"
+], "STATUS");
+
 module.exports = C;
 
 //console.log(C);
