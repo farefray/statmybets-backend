@@ -30,15 +30,18 @@ module.exports = {
 			handler(ctx) {
 				let filter = {};
 
-				/*if (ctx.params.filter == "my")
-					filter.author = ctx.user.id;
-				else if (ctx.params.author != null) {
-					filter.author = this.personService.decodeID(ctx.params.author);
-				}*/
+				if (ctx.params.discipline !== undefined) {
+					filter.discipline = ctx.params.discipline;
+				}
 
+				filter.date = {
+					$gt: ctx.params.since,
+					$lt: ctx.params.until
+				}
+
+				console.log(filter);
 				let query = _Event.find(filter);
-
-				return ctx.queryPageSort(query).exec().then( (docs) => {
+				return ctx.queryPageSort(query).exec().then((docs) => {
 					return this.toJSON(docs);
 				})
 				.then((json) => {

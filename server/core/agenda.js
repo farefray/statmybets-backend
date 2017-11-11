@@ -72,7 +72,7 @@ agenda.on("ready", function() {
 
 
 	agenda.every("8 hours", "removeUnverifiedAccounts");
-	agenda.every("12 hours", "updateEvents");
+	agenda.every("30 minutes", "updateEvents");
 	agenda.start();
 	logger.info(chalk.yellow("Agenda started!"));
 });

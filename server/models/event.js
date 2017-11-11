@@ -121,6 +121,6 @@ UserSchema.method('toJSON', function() {
   });
 */
 
-let Event = mongoose.model("Event", EventSchema);
+let _Event = mongoose.model("Event", EventSchema);
 
-module.exports = Event;
+module.exports = _Event;
