@@ -34,6 +34,12 @@ module.exports = {
 					filter.discipline = ctx.params.discipline;
 				}
 
+				if (ctx.params.game && ctx.params.game.length) {
+					filter.game = {
+						$in: ctx.params.game
+					};
+				}
+
 				filter.date = {
 					$gt: ctx.params.since,
 					$lt: ctx.params.until
@@ -68,18 +74,11 @@ module.exports = {
 
 		create: {
 			handler(ctx) {
+				console.log(ctx.params)
 				this.validateParams(ctx, true);
-				let event = new _Event({
-					date: ctx.params.date,
-					id: ctx.params.ID,
-					team_A: {
-						name: ctx.team_A
-					},
-					team_B: {
-						name: ctx.team_B
-					},
-				});
-
+				let event = new _Event(ctx.params.event);
+				event.source = [C.SOURCE_MANUAL];
+				console.log(event);
 				return event.save()
 				.then((doc) => {
 					return this.toJSON(doc);
