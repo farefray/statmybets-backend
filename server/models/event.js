@@ -89,6 +89,10 @@ let EventSchema = new Schema({
 		type: Boolean,
 		default: false
 	},
+	live: {
+		type: Boolean,
+		default: false
+	},
 	user_id: {
 		type: Number,
 		default: 0

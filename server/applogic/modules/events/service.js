@@ -30,6 +30,12 @@ module.exports = {
 			handler(ctx) {
 				let filter = {};
 
+				if(ctx.params.title && ctx.params.title.length) {
+					// search by team name
+					const str = ctx.params.title.toLowerCase();
+					filter = { $or:[ {'team_A.name': new RegExp(str, "i")}, {'team_B.name': new RegExp(str, "i")} ]};
+				}
+
 				if (ctx.params.discipline !== undefined) {
 					filter.discipline = ctx.params.discipline;
 				}
@@ -43,7 +49,7 @@ module.exports = {
 				filter.date = {
 					$gt: ctx.params.since,
 					$lt: ctx.params.until
-				}
+				};
 
 				console.log(filter);
 				let query = _Event.find(filter);
