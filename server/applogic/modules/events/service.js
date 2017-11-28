@@ -178,7 +178,8 @@ module.exports = {
 		return new Promise((resolve, reject) => {
 			ctx.assertModelIsExist(ctx.t("app:PostNotFound"));
 
-			if (ctx.model.author.code == ctx.user.code || ctx.isAdmin())
+			// TODO
+			if (ctx.model.author.code == ctx.user.id || ctx.isAdmin())
 				resolve();
 			else
 				reject();

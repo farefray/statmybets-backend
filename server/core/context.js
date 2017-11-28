@@ -12,7 +12,8 @@ let _ 				= require("lodash");
 let hash			= require("object-hash");
 
 let Services; // circular reference
-
+const jwt = require("jsonwebtoken");
+const jwtsecret = "jwtsecret"; //TODO
 /**
  * Context class for requests
  */
@@ -69,16 +70,18 @@ class Context {
 	 * @returns
 	 */
 	static CreateFromREST(service, action, app, req, res) {
+		console.log('create from REST');
 		let ctx = new Context(service);
 		ctx.provider = "rest";
 		ctx.app = app;
 		ctx.req = req;
 		ctx.res = res;
 		ctx.t = req.t;
-		ctx.user = req.user;
+		ctx.user = req.headers.auth !== undefined ? jwt.verify(req.headers.auth, jwtsecret) : undefined;
 		ctx.params = _.defaults({}, req.query, req.params, req.body);
 		ctx.action = action;
 
+		console.log(ctx.user);
 		return ctx;
 	}
 
@@ -237,16 +240,18 @@ class Context {
 	checkPermission() {
 		let permission = this.action.permission || this.service.$settings.permission || C.PERM_LOGGEDIN;
 
-		if (permission == C.PERM_PUBLIC)
+		if (permission === C.PERM_PUBLIC) {
 			return Promise.resolve();
-
+		}
 
 		return Promise.resolve()
-
 		// check logged in
 		.then(() => {
-			if (!this.user)
+			console.log('checkPermission');
+			console.log(this.user);
+			if (!this.user) {
 				this.errorUnauthorized();
+			}
 		})
 
 		// check role
