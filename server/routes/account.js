@@ -16,7 +16,6 @@ let mailer 		= require("../libs/mailer");
 
 let User 		= require("../models/user");
 const jwt = require('jsonwebtoken');
-const jwtsecret = "jwtsecret"; //TODO
 
 /**
  * Check what social API are configured. We only show
@@ -52,7 +51,7 @@ module.exports = function(app, db) {
 			req.assert("token", false).notEmpty();
 			req.assert("id", false).notEmpty();
 			req.assert("email", false).notEmpty();
-			jwt.verify(req.body.token, jwtsecret, function(err, decoded) {
+			jwt.verify(req.body.token, config.jwtSecret, function(err, decoded) {
 				if(err === null && decoded && decoded.id === req.body.id && decoded.email === req.body.email) {
 					// verificated token
 					return response.json(res, "OK", response.OK);

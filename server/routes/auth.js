@@ -13,7 +13,6 @@ let mailer = require("../libs/mailer");
 let User = require("../models/user");
 let response = require("../core/response");
 const jwt = require('jsonwebtoken');
-const jwtsecret = "jwtsecret"; //TODO
 /**
 	* Generate JSON or HTML response to client,
 	* If browser accept JSON and not HTML, we send
@@ -60,13 +59,10 @@ module.exports = function (app, db) {
 							id: user.id,
 							email: user.email,
 							username: user.username,
-							roles: user.roles,
-							token: null
+							roles: user.roles
 						};
 
-						console.log(user);
-						const token = jwt.sign(payload, jwtsecret); //здесь создается JWT
-						payload.token = token;
+						payload.token = jwt.sign(payload, config.jwtSecret); //здесь создается JWT;
 						//return response.json({user: 'test', token: 'JWT ' + token});
 						return response.json(res, payload);
 					});

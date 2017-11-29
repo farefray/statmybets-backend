@@ -13,7 +13,6 @@ let hash			= require("object-hash");
 
 let Services; // circular reference
 const jwt = require("jsonwebtoken");
-const jwtsecret = "jwtsecret"; //TODO
 /**
  * Context class for requests
  */
@@ -77,7 +76,7 @@ class Context {
 		ctx.req = req;
 		ctx.res = res;
 		ctx.t = req.t;
-		ctx.user = req.headers.auth !== undefined ? jwt.verify(req.headers.auth, jwtsecret) : undefined;
+		ctx.user = req.headers.auth !== undefined ? jwt.verify(req.headers.auth, config.jwtSecret) : undefined;
 		ctx.params = _.defaults({}, req.query, req.params, req.body);
 		ctx.action = action;
 
@@ -256,16 +255,22 @@ class Context {
 
 		// check role
 		.then(() => {
-			if (permission == C.PERM_ADMIN && !this.isAdmin()) {
+			console.log('checking roles')
+			console.log(permission);
+			console.log(this.isAdmin());
+			console.log(this.user.roles);
+			console.log(C.ROLE_USER);
+			if (permission === C.PERM_ADMIN && !this.isAdmin()) {
 				this.errorForbidden();
 			}
-			else if (permission == C.PERM_USER && this.user.roles.indexOf(C.ROLE_USER) == -1) {
+			else if (permission === C.PERM_USER && this.user.roles.indexOf(C.ROLE_USER) == -1) {
 				this.errorForbidden();
 			}
 		})
 
 		// check owner
 		.then(() => {
+			console.log('checking owner')
 			if (permission == C.PERM_OWNER && _.isFunction(this.service.$schema.ownerChecker)) {
 				return this.service.$schema.ownerChecker(this).catch((err) => {
 					if (_.isObject(err))
