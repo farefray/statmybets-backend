@@ -10,6 +10,7 @@ let _Prediction 		= require("./models/prediction");
 
 module.exports = {
 	settings: {
+		idParamName: "_id",
 		name: "predictions",
 		version: 1,
 		namespace: "predictions",
@@ -125,7 +126,7 @@ module.exports = {
 			handler(ctx) {
 				ctx.assertModelIsExist(ctx.t("app:BetNotFound"));
 
-				return _Prediction.remove({ _id: ctx.ID })
+				return _Prediction.remove({ _id: ctx.model._id })
 				.then(() => {
 					return ctx.model;
 				})
@@ -167,8 +168,7 @@ module.exports = {
 	ownerChecker(ctx) {
 		return new Promise((resolve, reject) => {
 			ctx.assertModelIsExist(ctx.t("app:PostNotFound"));
-
-			if (ctx.model.author.code == ctx.user.code || ctx.isAdmin())
+			if (ctx.model.user_id === 0 /* TODO remove after multiusers are implented*/ || ctx.model.user_id === ctx.user.id || ctx.isAdmin())
 				resolve();
 			else
 				reject();

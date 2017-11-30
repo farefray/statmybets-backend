@@ -70,7 +70,11 @@ PredictionSchema.plugin(autoIncrement.plugin, {
 	startAt: 1
 });
 
-
+PredictionSchema.method("toJSON", function() {
+	let prediction = this.toObject();
+	delete prediction.__v;
+	return prediction;
+});
 
 let Prediction = mongoose.model("Prediction", PredictionSchema);
 

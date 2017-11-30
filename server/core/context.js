@@ -77,6 +77,7 @@ class Context {
 		ctx.res = res;
 		ctx.t = req.t;
 		ctx.user = req.headers.auth !== undefined ? jwt.verify(req.headers.auth, config.jwtSecret) : undefined;
+		// TODO load user model here, as it failed notifyChanges if thats just an object :(
 		ctx.params = _.defaults({}, req.query, req.params, req.body);
 		ctx.action = action;
 
@@ -199,11 +200,14 @@ class Context {
 	 */
 	resolveModel() {
 		if (_.isFunction(this.service.modelResolver)) {
+			console.log(this.service.modelResolver);
+			console.log('isfunction')
 			let idParamName = this.service.$settings.idParamName || "id";
 
 			let id = this.params[idParamName];
-
-			if (id != null) {
+			console.log(idParamName);
+			console.log(id);
+			if (id !== undefined && id != null) {
 				return this.service.modelResolver.call(this.service, this, id).then( (model) => {
 					this.model = model;
 					return model;
@@ -211,6 +215,7 @@ class Context {
 			}
 		}
 
+		console.log('not resolved model')
 		return Promise.resolve(null);
 	}
 

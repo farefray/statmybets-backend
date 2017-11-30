@@ -22,22 +22,22 @@ class Service {
 
 	/**
 	 * Creates an instance of Service.
-	 * 
+	 *
 	 * @param {any} schema
 	 * @param {any} app
 	 * @param {any} db
-	 * 
+	 *
 	 * @memberOf Service
 	 */
 	constructor(schema, app, db) {
 		let self = this;
 		schema = schema || {};
-		self.$schema = schema; 
+		self.$schema = schema;
 		self.$app = app;
 		self.$db = db;
 
-		if (!Services) 
-			Services = require("./services");		
+		if (!Services)
+			Services = require("./services");
 
 		if (!schema.settings)
 			exception(`No settings of service '${self.name}'! Please create a settings object in service schema!`);
@@ -67,7 +67,7 @@ class Service {
 			exception(`No name of service '${self.name}'! Please set in settings of service schema!`);
 
 		if (!self.namespace && (settings.rest || settings.ws || settings.graphql))
-			exception(`No namespace of service '${self.name}'! Please set in settings of service schema!`);	
+			exception(`No namespace of service '${self.name}'! Please set in settings of service schema!`);
 
 
 		// Handle caching option
@@ -76,7 +76,7 @@ class Service {
 			self.$cacher = new Cacher(cacheType, self.name, config.cacheTimeout);
 			//self.$cacher.clean();
 		}
-		
+
 		// Wrap the handler function to implement caching feature
 		let cachingWrapper = function(action, handler) {
 			return function(ctx) {
@@ -92,7 +92,7 @@ class Service {
 					return handler(ctx).then((json) => {
 						self.putToCache(cacheKey, json);
 						return json;
-					});					
+					});
 				});
 			};
 		};
@@ -153,15 +153,16 @@ class Service {
 	/**
 	 * Convert the `docs` MongoDB model to JSON object.
 	 * With `skipFields` can be filter the properties
-	 * 
+	 *
 	 * @param {any} 	docs		MongoDB document(s)
 	 * @param {String} 	propFilter	Filter properties of model. It is a space-separated `String` or an `Array`
 	 * @returns						JSON object/array
-	 * 
+	 *
 	 * @memberOf Service
 	 */
 	toJSON(docs, propFilter) {
 		let func = function(doc) {
+			console.log(doc);
 			let json = doc.toJSON();
 			if (propFilter != null)
 				return _.pick(json, propFilter);
@@ -173,7 +174,7 @@ class Service {
 			propFilter = this.$settings.modelPropFilter;
 		}
 
-		if (_.isString(propFilter)) 
+		if (_.isString(propFilter))
 			propFilter = propFilter.split(" ");
 
 		if (_.isArray(docs)) {
@@ -185,22 +186,22 @@ class Service {
 
 	/**
 	 * Populate models by schema
-	 * 
+	 *
 	 * @param {any} docs			Models
 	 * @param {any} populateSchema	schema for population
 	 * @returns	{Promise}
-	 * 
+	 *
 	 * @memberOf Service
 	 */
 	populateModels(docs, populateSchema) {
-		populateSchema = populateSchema || this.$settings.modelPopulates; 
+		populateSchema = populateSchema || this.$settings.modelPopulates;
 		if (docs != null && populateSchema) {
 			let promises = [];
 			_.forIn(populateSchema, (serviceName, field) => {
 				if (_.isString(serviceName)) {
 					let service = Services.get(serviceName);
 					if (service && _.isFunction(service["getByID"])) {
-						let items = _.isArray(docs) ? docs : [docs]; 
+						let items = _.isArray(docs) ? docs : [docs];
 						items.forEach((doc) => {
 							promises.push(service.getByID(doc[field]).then((populated) => {
 								doc[field] = populated;
@@ -216,12 +217,12 @@ class Service {
 				});
 			}
 		}
-		return Promise.resolve(docs);		
-	}	
+		return Promise.resolve(docs);
+	}
 
 	/**
 	 * Get model(s) by ID(s). The `id` can be a number or an array with IDs.
-	 * 
+	 *
 	 * @param {Number|Array} id
 	 * @returns {Object|Array} JSON object(s)
 	 */
@@ -239,12 +240,12 @@ class Service {
 			if (cacheKey)
 				return this.getFromCache(cacheKey);
 			else
-				return null;				
+				return null;
 		})
 		.then((data) => {
 			if (data)
 				return data;
-			
+
 			let query;
 			if (_.isArray(id)) {
 				query = this.collection.find({ _id: { $in: id} });
@@ -264,16 +265,16 @@ class Service {
 
 				return json;
 			});
-		});			
-	}	
+		});
+	}
 
 	/**
 	 * Resolve model by `code` param
-	 * 
+	 *
 	 * @param {any} ctx		Context of request
 	 * @param {any} code	Code of the model
 	 * @returns	{Promise}
-	 */	
+	 */
 	modelResolver(ctx, code) {
 		if (this.collection == null)
 			return Promise.resolve();
@@ -294,37 +295,37 @@ class Service {
 
 	/**
 	 * Decode `code` value to `ID`
-	 * 
+	 *
 	 * @param {any} code
 	 * @returns {String} id
-	 * 
+	 *
 	 * @memberOf Service
 	 */
 	decodeID(code) {
 		if (_.isFunction(this.collection.schema.methods["decodeID"]))
 			return this.collection.schema.methods.decodeID(code);
-		throw new Error(`'decodeID' method not implemented in '${this.name}' service!`);		
+		throw new Error(`'decodeID' method not implemented in '${this.name}' service!`);
 	}
 
 	/**
 	 * Encode `id` to `code` value
-	 * 
+	 *
 	 * @param {any} id
 	 * @returns {String} code
-	 * 
+	 *
 	 * @memberOf Service
 	 */
 	encodeID(id) {
 		if (_.isFunction(this.collection.schema.methods["encodeID"]))
 			return this.collection.schema.methods.encodeID(id);
-		throw new Error(`'encodeID' method not implemented in '${this.name}' service!`);		
+		throw new Error(`'encodeID' method not implemented in '${this.name}' service!`);
 	}
 
 	/**
 	 * Generate a cache key for caching from action name & hashed parameters
-	 * E.g: 
+	 * E.g:
 	 * 		find:8de264844d01ab32078eb71762fdfda646a15cb4
-	 * 
+	 *
 	 * @param {any} name	name of action
 	 * @param {any} params	params of request
 	 * @returns	{String} 	hashed key
@@ -334,21 +335,21 @@ class Service {
 	}
 
 	/**
-	 * Get a result from cache by `key` 
-	 * 
+	 * Get a result from cache by `key`
+	 *
 	 * @param {any} key
 	 * @returns {Promise}
 	 */
 	getFromCache(key) {
 		if (this.$cacher) {
 			return this.$cacher.get(key);
-		} else 
-			return Promise.resolve(null); 
+		} else
+			return Promise.resolve(null);
 	}
 
 	/**
 	 * Put the result to the cache by `key`
-	 * 
+	 *
 	 * @param {any} key
 	 * @param {any} data
 	 * @returns
@@ -356,8 +357,8 @@ class Service {
 	putToCache(key, data) {
 		if (this.$cacher) {
 			return this.$cacher.set(key, data);
-		} else 
-			return Promise.resolve(); 
+		} else
+			return Promise.resolve();
 	}
 
 	/**
@@ -366,17 +367,17 @@ class Service {
 	clearCache() {
 		if (this.$cacher) {
 			return this.$cacher.clean();
-		} 
+		}
 		return Promise.resolve();
-	}	
+	}
 
 	/**
 	 * Notificate the connected users if the model changed
-	 * 
+	 *
 	 * @param {any} ctx		Request context
 	 * @param {any} type	Type of changes (created, updated, deleted...etc)
 	 * @param {any} json	JSON payload
-	 * 
+	 *
 	 * @memberOf Service
 	 */
 	notifyModelChanges(ctx, type, json) {
@@ -387,15 +388,15 @@ class Service {
 
 		// Clear cached values
 		this.clearCache();
-	}		
+	}
 
 	/**
 	 * Get a service by name of service
-	 * 
+	 *
 	 * @param {any} serviceName
 	 * @returns {Service}
-	 * 
-	 * @memberOf Service	
+	 *
+	 * @memberOf Service
 	 */
 	services(serviceName) {
 		return Services.get(serviceName);
