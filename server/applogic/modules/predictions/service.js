@@ -95,15 +95,10 @@ module.exports = {
 			handler(ctx) {
 				ctx.assertModelIsExist(ctx.t("app:PostNotFound"));
 				this.validateParams(ctx);
-
-				return this.collection.findById(ctx.ID).exec()
+				return this.collection.findById(ctx.params._id).exec()
 				.then((doc) => {
-					if (ctx.params.odds_1 !== null) {
-						doc.odds_1 = ctx.params.odds_1;
-					}
-
-					if (ctx.params.odds_2 !== null) {
-						doc.odds_2 = ctx.params.odds_2;
+					if (ctx.params.status !== null) {
+						doc.status = ctx.params.status;
 					}
 
 					return doc.save();
@@ -147,6 +142,7 @@ module.exports = {
 		 * @param {boolean} strictMode 		strictMode. If true, need to exists the required parameters
 		 */
 		validateParams(ctx, strictMode) {
+			// TODO
 			/*if (strictMode || ctx.hasParam("title"))
 				ctx.validateParam("title").trim().notEmpty(ctx.t("app:PostTitleCannotBeEmpty")).end();
 
