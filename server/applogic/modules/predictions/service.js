@@ -31,11 +31,11 @@ module.exports = {
 			handler(ctx) {
 				let filter = {};
 
-				/*if (ctx.params.filter == "my")
-					filter.author = ctx.user.id;
-				else if (ctx.params.author != null) {
-					filter.author = this.personService.decodeID(ctx.params.author);
-				}*/
+				if(ctx.params.title && ctx.params.title.length) {
+					// search by team name
+					const str = ctx.params.title.toLowerCase();
+					filter = { $or:[ { selected_events : { $elemMatch : {'team_A.name': new RegExp(str, "i")}}}, { selected_events : { $elemMatch : {'team_B.name': new RegExp(str, "i")}}} ]};
+				}
 
 				let query = _Prediction.find(filter);
 

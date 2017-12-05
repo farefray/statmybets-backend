@@ -28,6 +28,7 @@ module.exports = {
 		find: {
 			cache: false, //TODO
 			handler(ctx) {
+				// TODO Maybe merged somehow with predictions/service? DRY
 				let filter = {};
 
 				if(ctx.params.title && ctx.params.title.length) {
