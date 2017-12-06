@@ -37,6 +37,13 @@ module.exports = {
 					filter = { $or:[ { selected_events : { $elemMatch : {'team_A.name': new RegExp(str, "i")}}}, { selected_events : { $elemMatch : {'team_B.name': new RegExp(str, "i")}}} ]};
 				}
 
+				if(ctx.params.daterange && ctx.params.daterange.length) {
+					filter.date = {
+						$gt: new Date(ctx.params.daterange[0]).getTime(),
+						$lt: new Date(ctx.params.daterange[1]).getTime(),
+					};
+				}
+
 				let query = _Prediction.find(filter);
 
 				return ctx.queryPageSort(query).exec().then( (docs) => {

@@ -19,7 +19,7 @@ module.exports = {
 						_.forIn(response.data.bets, (bet) => {
 
 							let event = {
-								date: bet.date,
+								date: parseInt(+bet.date * 1000),
 								game: bet.game,
 								game_league: bet.tourn,
 								odds_1: bet.coef_1,

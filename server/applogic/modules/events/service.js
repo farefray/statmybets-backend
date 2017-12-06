@@ -47,10 +47,22 @@ module.exports = {
 					};
 				}
 
-				filter.date = {
-					$gt: ctx.params.since,
-					$lt: ctx.params.until
-				};
+				if(ctx.params.daterange && ctx.params.daterange.length) {
+					filter.date = {
+						$gt: new Date(ctx.params.daterange[0]).getTime(),
+						$lt: new Date(ctx.params.daterange[1]).getTime(),
+					};
+				} else {
+					// by default return only X
+					const end = new Date();
+					const start = new Date();
+					start.setTime(start.getTime() - 3600 * 1000 * 24 * 3);
+					end.setTime(end.getTime() + 3600 * 1000 * 24 * 2);
+					filter.date = {
+						$gt: start.getTime(),
+						$lt: end.getTime(),
+					};
+				}
 
 				console.log(filter);
 				let query = _Event.find(filter);
