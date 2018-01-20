@@ -58,7 +58,7 @@ let PredictionSchema = new Schema({
 	],
 	user_id: {
 		type: Number,
-		default: 0
+		required: true
 	},
 }, schemaOptions);
 

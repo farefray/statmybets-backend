@@ -18,7 +18,7 @@ module.exports = {
 		rest: true,
 		ws: false,
 		graphql: false,
-		permission: C.PERM_PUBLIC, // TODO PERM_LOGGEDIN,
+		permission: C.PERM_LOGGEDIN,
 		role: "user", //TODO
 		collection: _Prediction,
 		modelPropFilter: null,
@@ -29,8 +29,9 @@ module.exports = {
 		find: {
 			cache: false, //TODO
 			handler(ctx) {
-				let filter = {};
+				ctx.assertModelIsExist(ctx.t("app:PredictionNotFound"));
 
+				let filter = {};				
 				if(ctx.params.title && ctx.params.title.length) {
 					// search by team name
 					const str = ctx.params.title.toLowerCase();
@@ -43,6 +44,8 @@ module.exports = {
 						$lt: new Date(ctx.params.daterange[1]).getTime(),
 					};
 				}
+
+				filter.user_id =  ctx.user.id;
 
 				let query = _Prediction.find(filter);
 
@@ -80,7 +83,7 @@ module.exports = {
 					status: ctx.params.status,
 					final_odds: ctx.params.final_odds,
 					selected_events: ctx.params.selected_events,
-					user_id: ctx.params.suser_id
+					user_id: ctx.params.user_id
 				});
 
 				return event.save()
@@ -124,7 +127,7 @@ module.exports = {
 		},
 
 		remove: {
-			permission: C.PERM_OWNER,
+			permission: C.PERM_OWNER, // ToDo test if ownership works for removing.
 			handler(ctx) {
 				ctx.assertModelIsExist(ctx.t("app:BetNotFound"));
 
@@ -170,8 +173,8 @@ module.exports = {
 	 */
 	ownerChecker(ctx) {
 		return new Promise((resolve, reject) => {
-			ctx.assertModelIsExist(ctx.t("app:PostNotFound"));
-			if (ctx.model.user_id === 0 /* TODO remove after multiusers are implented*/ || ctx.model.user_id === ctx.user.id || ctx.isAdmin())
+			ctx.assertModelIsExist(ctx.t("app:NotFound"));
+			if (ctx.model.user_id === ctx.user.id)
 				resolve();
 			else
 				reject();

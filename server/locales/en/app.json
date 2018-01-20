@@ -11,6 +11,8 @@
 	"Clone": "Clone",
 	"Delete": "Delete",
 
+	"NotFound"  :"Not found",
+	
 	"PostTitleCannotBeEmpty": "Post title cannot be blank!",
 	"PostContentCannotBeEmpty": "Post content cannot be blank!",
 	"PostNotFound": "Post not found!",
