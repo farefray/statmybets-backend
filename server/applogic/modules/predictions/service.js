@@ -171,9 +171,14 @@ module.exports = {
 	 */
 	ownerChecker(ctx) {
 		return new Promise((resolve, reject) => {
+			console.log('checking module');
 			ctx.assertModelIsExist(ctx.t("app:NotFound"));
-			if (ctx.model.user_id === ctx.user.id)
+			console.log(ctx.model.user_id);
+			console.log(ctx.user.id);
+			if (ctx.model.user_id == ctx.user.id) {
+				console.log('resolve');
 				resolve();
+			}
 			else
 				reject();
 		});

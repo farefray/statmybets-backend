@@ -163,7 +163,7 @@ class Service {
 	toJSON(docs, propFilter) {
 		let func = function(doc) {
 			console.log(doc);
-			let json = doc.toJSON();
+			let json = (typeof doc.toJSON === "function" ?  doc.toJSON() : doc); // ToDo check why sometimes it's alredy in json
 			if (propFilter != null)
 				return _.pick(json, propFilter);
 			else
