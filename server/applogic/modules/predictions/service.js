@@ -29,8 +29,6 @@ module.exports = {
 		find: {
 			cache: false, //TODO
 			handler(ctx) {
-				ctx.assertModelIsExist(ctx.t("app:PredictionNotFound"));
-
 				let filter = {};				
 				if(ctx.params.title && ctx.params.title.length) {
 					// search by team name
@@ -45,11 +43,11 @@ module.exports = {
 					};
 				}
 
-				filter.user_id =  ctx.user.id;
+				filter.user_id = ctx.user.id;
 
 				let query = _Prediction.find(filter);
 
-				return ctx.queryPageSort(query).exec().then( (docs) => {
+				return ctx.queryPageSort(query).exec().then((docs) => {
 					return this.toJSON(docs);
 				})
 				.then((json) => {
