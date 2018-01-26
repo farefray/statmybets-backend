@@ -60,6 +60,7 @@ let PredictionSchema = new Schema({
 		type: Number,
 		required: true
 	},
+	categories: [],
 }, schemaOptions);
 
 /**
