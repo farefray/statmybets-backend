@@ -81,7 +81,8 @@ module.exports = {
 					status: ctx.params.status,
 					final_odds: ctx.params.final_odds,
 					selected_events: ctx.params.selected_events,
-					user_id: ctx.params.user_id
+					user_id: ctx.params.user_id,
+					categories: ctx.params.categories
 				});
 
 				return event.save()
