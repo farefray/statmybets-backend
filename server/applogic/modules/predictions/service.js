@@ -38,13 +38,14 @@ module.exports = {
 
 				if(ctx.params.daterange && ctx.params.daterange.length) {
 					filter.date = {
-						$gt: new Date(ctx.params.daterange[0]).getTime(),
-						$lt: new Date(ctx.params.daterange[1]).getTime(),
+						$gt: (new Date(ctx.params.daterange[0]).getTime() / 1000).toFixed(), // Todo fixme
+						$lt: (new Date(ctx.params.daterange[1]).getTime() / 1000).toFixed(), // Todo fixme
 					};
 				}
-
+				
 				filter.user_id = ctx.user.id;
 
+				console.log(filter);
 				let query = _Prediction.find(filter);
 
 				return ctx.queryPageSort(query).exec().then((docs) => {

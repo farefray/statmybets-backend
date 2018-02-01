@@ -602,11 +602,17 @@ class Context {
 	 */
 	queryPageSort(query) {
 		if (this.params) {
-			if (this.params.limit)
+			if (this.params.limit) {
 				query.limit(parseInt(this.params.limit));
-
+			}/* else if (this.params.per_page) {
+				query.limit(parseInt(this.params.per_page));
+			}*/
+			
 			if (this.params.offset)
 				query.skip(parseInt(this.params.offset));
+			/*else if (this.params.page && this.params.per_page) {
+				query.skip(parseInt(this.params.page) * parseInt(this.params.per_page));
+			}*/
 
 			if (this.params.sort)
 				query.sort(this.params.sort.replace(/,/, " "));
