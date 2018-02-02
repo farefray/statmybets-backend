@@ -9,13 +9,13 @@ module.exports = {
 		version: pkg.version,
 		description: pkg.description,
 		keywords: pkg.keywords.join(","),
-		url: "http://bettingstats.online:" + (process.env.PORT || 3000) + "/",
+		url: "http://statmybets.com:" + (process.env.PORT || 3000) + "/",
 		//googleAnalyticsID: 'UA-xxxxx-x',
 		contactEmail: "maksym.fedan@gmail.com"
 	},
 
 	jwtSecret: "bettingStatsJWT",
-	ip: "127.0.0.1",
+	ip: "52.50.209.42",
 	port: process.env.PORT || 3000,
 
 	rootPath: global.rootPath,
