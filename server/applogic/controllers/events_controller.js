@@ -39,7 +39,7 @@ let Event_Controller = {
 			providers.keys().map(function (module) {
 				logger.info("  Loading", path.relative(path.join(__dirname, "..", "event_providers"), module), "event provider...");
 				addProvider(providers(module));
-				// self.forceReload();
+				self.forceReload();
 			});
 		}
 	},
