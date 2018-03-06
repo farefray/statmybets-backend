@@ -29,12 +29,19 @@ module.exports = {
 			cache: false, //TODO
 			handler(ctx) {
 				// TODO Maybe merged somehow with predictions/service? DRY
-				let filter = {};
+				let filter = {
+					// $or: []
+				};
 
 				if(ctx.params.title && ctx.params.title.length) {
 					// search by team name
 					const str = ctx.params.title.toLowerCase();
-					filter = { $or:[ {'team_A.name': new RegExp(str, "i")}, {'team_B.name': new RegExp(str, "i")} ]};
+					filter.$or = [ 
+						{"team_A.name": new RegExp(str, "i")}, 
+						{"team_B.name": new RegExp(str, "i")} 
+					];
+
+					/*  */
 				}
 
 				if (ctx.params.discipline !== undefined) {
@@ -47,22 +54,46 @@ module.exports = {
 					};
 				}
 
+				let gt, lt;
+				const end = new Date();
+				const start = new Date();
+
 				if(ctx.params.daterange && ctx.params.daterange.length) {
-					filter.date = {
-						$gt: new Date(ctx.params.daterange[0]).getTime(),
-						$lt: new Date(ctx.params.daterange[1]).getTime(),
-					};
+					gt = new Date(ctx.params.daterange[0]).getTime();
+					lt = new Date(ctx.params.daterange[1]).getTime();
 				} else {
 					// by default return only X
-					const end = new Date();
-					const start = new Date();
 					start.setTime(start.getTime() - 3600 * 1000 * 24 * 3);
 					end.setTime(end.getTime() + 3600 * 1000 * 24 * 2);
-					filter.date = {
-						$gt: start.getTime(),
-						$lt: end.getTime(),
-					};
+					gt = start.getTime();
+					lt = end.getTime();
 				}
+
+				// date in range OR item is custom [and date in bigger range]
+				start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+				// WHERE (date > lg AND date < lt) OR (source = C.SOURCE_MANUAL AND date > gt AND date < lt)
+				filter.$and = [{ 
+					$or: [{
+						"date": {
+							$gt: gt,
+							$lt: lt
+						}
+					}, {
+						$and: [{
+							"source": C.SOURCE_MANUAL
+						}, {
+							"date": {
+								$gt: start.getTime()
+							}
+						}
+					]}] 
+				}];
+
+				
+
+				// return custom events based on another timestamp.
+				
+				// filter = 
 
 				console.log(filter);
 				let query = _Event.find(filter);
@@ -93,7 +124,7 @@ module.exports = {
 
 		create: {
 			handler(ctx) {
-				console.log(ctx.params)
+				console.log(ctx.params);
 				this.validateParams(ctx, true);
 				let event = new _Event(ctx.params.event);
 				event.source = [C.SOURCE_MANUAL];
