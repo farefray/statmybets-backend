@@ -33,17 +33,6 @@ module.exports = {
 					// $or: []
 				};
 
-				if(ctx.params.title && ctx.params.title.length) {
-					// search by team name
-					const str = ctx.params.title.toLowerCase();
-					filter.$or = [ 
-						{"team_A.name": new RegExp(str, "i")}, 
-						{"team_B.name": new RegExp(str, "i")} 
-					];
-
-					/*  */
-				}
-
 				if (ctx.params.discipline !== undefined) {
 					filter.discipline = ctx.params.discipline;
 				}
@@ -71,6 +60,20 @@ module.exports = {
 
 				// date in range OR item is custom [and date in bigger range]
 				start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+
+				if(ctx.params.title && ctx.params.title.length) {
+					// search by team name
+					const str = ctx.params.title.toLowerCase();
+					filter.$or = [ 
+						{"team_A.name": new RegExp(str, "i")}, 
+						{"team_B.name": new RegExp(str, "i")} 
+					];
+
+					/* If no date range set and we are searching by name - extend range. */
+					gt = start.getTime();
+					lt = end.getTime();
+				}
+
 				// WHERE (date > lg AND date < lt) OR (source = C.SOURCE_MANUAL AND date > gt AND date < lt)
 				filter.$and = [{ 
 					$or: [{
