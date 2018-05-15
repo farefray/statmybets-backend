@@ -15,7 +15,7 @@ module.exports = {
 	},
 
 	jwtSecret: "bettingStatsJWT",
-	ip: "52.50.209.42",
+	ip: "34.246.162.170",
 	port: process.env.PORT || 3000,
 
 	rootPath: global.rootPath,
