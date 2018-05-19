@@ -45,6 +45,7 @@ module.exports = {
 				
 				filter.user_id = ctx.user.id;
 
+				console.log('filter');
 				console.log(filter);
 				let query = _Prediction.find(filter);
 
@@ -107,8 +108,20 @@ module.exports = {
 				this.validateParams(ctx);
 				return this.collection.findById(ctx.params._id).exec()
 				.then((doc) => {
-					if (ctx.params.status !== null) {
+					if (ctx.params.status) {
 						doc.status = ctx.params.status;
+					}
+
+					if (ctx.params.final_odds) {
+						doc.status = ctx.params.final_odds;
+					}
+
+					if (ctx.params.date) {
+						doc.status = ctx.params.date;
+					}
+
+					if (ctx.params.stake) {
+						doc.status = ctx.params.stake;
 					}
 
 					return doc.save();
