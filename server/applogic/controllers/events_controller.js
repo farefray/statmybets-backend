@@ -44,7 +44,7 @@ let Event_Controller = {
 		}
 	},
 	forceReload() {
-		return new Promise((rs, rj) => {
+		return new Promise((resolve, rj) => {
 			let self = this;
 			_.forIn(self.providers, (provider) => {
 				if (_.isFunction(provider.receive)) {
@@ -66,11 +66,12 @@ let Event_Controller = {
 									if(error === null) {
 										success++;
 									}
-									callback(null);
+									
+									callback();
 								});
 							}, function(err) {
 								logger.info("  Loaded ", success, " from ", total, " events");
-								return rs({response: response.OK, totalEvents: total, successEvents: success});
+								return resolve({response: response.OK, totalEvents: total, successEvents: success});
 							});
 						});
 					});
