@@ -12,43 +12,6 @@
 * [x] **[HTTP/2 Server Push](https://en.wikipedia.org/wiki/HTTP/2_Server_Push)** with [netjet](https://github.com/cloudflare/netjet)
 * [x] Bundled server-side code with [Webpack 2](https://webpack.github.io/)
 
-**Supported remote logging services**
-* [x] [Papertrail](https://papertrailapp.com/)
-* [x] [Graylog](https://www.graylog.org/)
-* [x] [LogEntries](https://logentries.com/)
-* [x] [Loggly](https://www.loggly.com/)
-* [x] [Logsene](https://sematext.com/logsene/)
-* [x] [Logz.io](http://logz.io/)
-
-Building the images for the first time
-```
-$ docker-compose build
-```
-
-Starting the images
-```
-$ docker-compose up
-```
-
-## Bundled server-side
-
-`npm run build && npm run build:server`
-It if was success, run the server: `npm run start:bundle`
-
-If you want to export bundled version copy these folders & files to the new place:
-
-```txt
-- server
-	- locales
-	- public
-	- views
-	- bundle.js
-- package.json
-- config.js (optional)
-```
-
-Install production dependencies with npm: `npm install --production`
-
 ## License
 
 Available under the [MIT license](https://tldrlegal.com/license/mit-license).

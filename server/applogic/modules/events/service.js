@@ -92,6 +92,15 @@ module.exports = {
 					]}] 
 				}];
 
+				if(ctx.params.customOnly) {
+					filter.$and = [{
+							$and: [{
+								"source": C.SOURCE_MANUAL
+							}
+						]}
+					];
+				}
+
 				
 
 				// return custom events based on another timestamp.
